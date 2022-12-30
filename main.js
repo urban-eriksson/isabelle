@@ -1,48 +1,60 @@
-async function loadIntoTable(url, table) {
+async function fetchData(businessUnit) {
+    const now = Date.now();
+    const start = (new Date(now)).toISOString().replaceAll(":", "%3A");
+    const end = (new Date(now + 1209600000)).toISOString().replaceAll(":", "%3A");
 
-    const tableBody = table.querySelector("tbody");
+    const url = `https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/${businessUnit}/groupactivities?period.end=${end}&period.start=${start}&webCategory=22`;
 
     const response = await fetch(url);
-    console.log(response);
+    return response.json();
+}
 
-    const items = await  response.json();
-    console.log(items);
 
-    tableBody.innerHTML="";
+function filterData(data) {
+    return data.filter(item => item.instructors.some(instructor => instructor.name == "Isabelle Badéa"));
+}
 
-    for (const item of items) {
 
-        //console.log(item["instructors"]);
-
-        for (const instructor of item["instructors"]) {
-            console.log(instructor["name"]);
-            if (instructor["name"] == "Isabelle Badéa") {
-                const rowElement = document.createElement("tr");
-
-                const pass = document.createElement("td");
-                pass.textContent = item["name"];
-                rowElement.appendChild(pass);
-                
-                const lokal = document.createElement("td");
-                lokal.textContent = item["businessUnit"]["name"];
-                rowElement.appendChild(lokal);
-
-                const tid = document.createElement("td");
-                tid.textContent = item["duration"]["start"];
-                rowElement.appendChild(tid);
-        
-                tableBody.appendChild(rowElement);        
-            }
-
-        }
+function transformItem(item) {
+    const days = ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"];
+    const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+    console.log(item);
+    var date = new Date(item.duration.start);
+    const zeroPad = (num, places) => String(num).padStart(places, '0')
+    const location = item.businessUnit.name.replace("Stockholm -", "")
+    return { date: date, type: item.name, location: location, startTime: `${days[date.getDay()]} ${zeroPad(date.getDate(), 2)} ${months[date.getMonth()]}. ${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}` }
+}
 
 
 
+async function loadIntoTable(businessUnits, table) {
+    const allData = (await Promise.all(businessUnits.map(bu => fetchData(bu)))).flat()
+    const filteredData = filterData(allData);
+    const transformedData = filteredData.map(item => transformItem(item));
+    const sortedData = transformedData.sort((a, b) => a.date - b.date);
 
+    const tableBody = table.querySelector("tbody");
+    tableBody.innerHTML = "";
 
+    for (const item of sortedData) {
+        const rowElement = document.createElement("tr");
+
+        const type = document.createElement("td");
+        type.textContent = item.type;
+        rowElement.appendChild(type);
+
+        const location = document.createElement("td");
+        location.textContent = item.location;
+        rowElement.appendChild(location);
+
+        const startTime = document.createElement("td");
+        startTime.textContent = item.startTime;
+        rowElement.appendChild(startTime);
+
+        tableBody.appendChild(rowElement);
     }
 
 }
 
-
-loadIntoTable("https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/6235/groupactivities?period.end=2023-01-05T22%3A59%3A59.999Z&period.start=2022-12-29T23%3A00%3A00.000Z&webCategory=22" , document.querySelector("table"))
+businessUnits = [6232, 6235]
+loadIntoTable(businessUnits, document.querySelector("table"))
