@@ -1,3 +1,9 @@
+
+
+function get_something() {
+    return something;
+}
+
 async function fetchData(businessUnit) {
     const now = Date.now();
     const start = (new Date(now)).toISOString().replaceAll(":", "%3A");
@@ -56,5 +62,13 @@ async function loadIntoTable(businessUnits, table) {
 
 }
 
+var button = document.getElementById('button1');
+var color = button.style.backgroundColor;
+button.addEventListener('click', function () {
+  // this function executes whenever the user clicks the button
+  color = button.style.backgroundColor = color === 'green' ? 'red' : 'green';
+});
+
 businessUnits = [6232, 6235]
 loadIntoTable(businessUnits, document.querySelector("table"))
+get_something()
