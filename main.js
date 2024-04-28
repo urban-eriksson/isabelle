@@ -14,7 +14,7 @@ function filterData(data) {
     return data.filter(item => item.instructors.some(instructor => instructor.name == "Isabelle Badéa"));
 }
 
-
+// func
 function transformItem(item) {
     const days = ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"];
     const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
