@@ -42,3 +42,12 @@ li {
     padding: 10px;
     margin: 5px;
 }
+
+.button-on {
+    background-color: red;
+    color: white;
+  }
+  .button-off {
+    background-color: grey;
+    color: black;
+  }
