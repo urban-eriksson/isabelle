@@ -1,0 +1,44 @@
+/* Basic styling to ensure that the upper and lower halves of the page are divided equally */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+    height: 50%;
+    background-color: #f4f4f4;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-btn {
+    background-color: grey;
+    color: white;
+    border: none;
+    padding: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.list-container {
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background-color: #ddd;
+    padding: 10px;
+    margin: 5px;
+}

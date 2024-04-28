@@ -1,50 +1,31 @@
 <!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-    <title>Isabelle</title>
-    <link rel="stylesheet" href="main.css">    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Grid</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="header">
-        <p>Item one</p>
-        <p>Isabelle</p>
-        <a href="settings.html">Item two</a>
-    </div>    
-    <label class="switch switch-yes-no" width="24px">
-        <input class="switch-input" type="checkbox" />
-        <span class="switch-label" data-on="Yes" data-off="No"></span> 
-        <span class="switch-handle"></span> 
-    </label>
-
     <div class="grid-container">
-        <div class="grid-item">
-            <label class="switch switch-yes-no">
-                <input class="switch-input" type="checkbox" />
-                <span class="switch-label" data-on="Yes" data-off="No"></span> 
-                <span class="switch-handle"></span> 
-            </label>
-                </div>
-        <div class="grid-item">
-            <label id="button1" value="Click Here">
-                Click here
-                </label>
-        </div>
-        <div class="grid-item">3</div>  
-        <div class="grid-item">4</div>
-        <div class="grid-item">5</div>
-        <div class="grid-item">6</div>  
-      
-        
-      </div>    
-    <table class="table">
-        <thead></thead>
-        <tbody></tbody>
-    </table>
-
-    <script>
-        import * as some_module  from "./modules/query.js";
-    </script>
-
+        <!-- Creating a 3x3 grid of buttons -->
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+        <button class="toggle-btn">Button</button>
+    </div>
+    <div class="list-container">
+        <ul>
+            <li>List Item 1</li>
+            <li>List Item 2</li>
+            <li>List Item 3</li>
+        </ul>
+    </div>
+    <script src="js/main.js"></script>
 </body>
 </html>
