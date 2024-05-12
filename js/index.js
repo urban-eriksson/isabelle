@@ -7,7 +7,7 @@ function get_something() {
 async function fetchData(businessUnit) {
     const now = Date.now();
     const start = (new Date(now)).toISOString().replaceAll(":", "%3A");
-    const end = (new Date(now + 1209600000)).toISOString().replaceAll(":", "%3A");
+    const end = (new Date(now + 518400000)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"    
 
     const url = `https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/${businessUnit}/groupactivities?period.end=${end}&period.start=${start}&webCategory=22`;
 
@@ -59,7 +59,6 @@ async function loadIntoTable(businessUnits, table) {
 
         tableBody.appendChild(rowElement);
     }
-
 }
 
 var button = document.getElementById('button1');

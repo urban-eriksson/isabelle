@@ -1,8 +1,4 @@
-// document.querySelectorAll('.toggle-btn').forEach(button => {
-//     button.addEventListener('click', function() {
-//         this.style.backgroundColor = this.style.backgroundColor === 'red' ? 'grey' : 'red';
-//     });
-// });
+import {locations, loadIntoTable} from './query.js'
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -38,3 +34,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+loadIntoTable(locations.map(location => location.id),  document.querySelector("table"))
