@@ -1,55 +1,48 @@
-
-export const something = 2323;
-
-export const locations = [
-    {"id": 6223, "name": "Abrahamsberg"},
-    {"id": 6229, "name": "City"},
-    // {"id": 6230, "name": "Farsta"},
-    // {"id": 6231, "name": "Hagastan"},
-    // {"id": 6232, "name": "Hornstull"},
-    // {"id": 6233, "name": "Lindhagen"},
-    // {"id": 6235, "name": "Kungsholmen"},
-    // {"id": 6236, "name": "Orminge"},
-    // {"id": 6237, "name": "Ringen"},
-    // {"id": 6238, "name": "Sickla"},
-    // {"id": 6239, "name": "Skanstull"},
-    // {"id": 6241, "name": "Skrapan"},
-    // {"id": 6242, "name": "Solna"},
-    // {"id": 6243, "name": "Sundbyberg"},
-    // {"id": 6244, "name": "Sveavägen"},
-];
-
-//export {somethingElse}
-
+import {gyms} from './gymsData.js'
 
 async function fetchData(businessUnit) {
     const now = Date.now();
     const start = (new Date(now)).toISOString().replaceAll(":", "%3A");
     const end = (new Date(now + 518400000)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"    
-
     const url = `https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/${businessUnit}/groupactivities?period.end=${end}&period.start=${start}&webCategory=22`;
-
     const response = await fetch(url);
     return response.json();
 }
 
+// Function to convert locations to IDs
+function getGymIdsFromLocations(locations) {
+    return gyms
+        .filter(gym => locations.includes(gym.location))  // Filter gyms by matching locations
+        .map(gym => gym.id);  // Map the filtered gyms to their IDs
+}    
 
-function filterData(data) {
-    return data;
-    // return data.filter(item => item.instructors.some(instructor => instructor.name == "Isabelle Badéa"));
+
+export async function fetchAllData(locationsArray) {
+    const gymIds = getGymIdsFromLocations(locationsArray);
+    return (await Promise.all(gymIds.map(id => fetchData(id)))).flat()
 }
 
-
-function transformItem(item) {
+export function transformItem(item) {
     const days = ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"];
     const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
     console.log(item);
     var date = new Date(item.duration.start);
     const zeroPad = (num, places) => String(num).padStart(places, '0')
-    const location = item.businessUnit.name.replace("Stockholm -", "")
-    return { date: date, type: item.name, location: location, instructor: item.instructors[0].name, startTime: `${days[date.getDay()]} ${zeroPad(date.getDate(), 2)} ${months[date.getMonth()]}. ${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}` }
+    const location = item.businessUnit.location.replace("Stockholm -", "")
+    let name = "---"
+    if (item.instructors.length > 0) {
+        name = item.instructors[0].name
+    }
+    if (item.instructors.length > 1) {
+        name += ' m. fl.'
+    }
+
+    return { date: date, type: item.name, location: location, name, startTime: `${days[date.getDay()]} ${zeroPad(date.getDate(), 2)} ${months[date.getMonth()]}. ${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}` }
 }
 
+export function get_locations() {
+    return gyms.map(gym => gym.location)
+}
 
 
 export async function loadIntoTable(businessUnits, table) {
@@ -84,4 +77,11 @@ export async function loadIntoTable(businessUnits, table) {
 
         tableBody.appendChild(rowElement);
     }
+}
+
+
+
+function filterData(data) {
+    return data;
+    // return data.filter(item => item.instructors.some(instructor => instructor.name == "Isabelle Badéa"));
 }

@@ -1,16 +1,35 @@
 <!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-    <title>Isabelle</title>
-    <link rel="stylesheet" href="main.css">    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="header">
-        <a href="index.html">Back</a>
-        <p>Settings</p>
-    </div>    
-    <script src="settings.js"></script>    
 
+    <div class="header">
+        <i id="back-icon" class="fas fa-arrow-left icon"></i>
+    </div>
+
+    <div class="grid-container">
+        <!-- Creating a 3x3 grid of buttons -->
+        <button id="button1" class="toggle-btn">Button</button>
+        <button id="button2" class="toggle-btn">Button</button>
+        <button id="button3" class="toggle-btn">Button</button>
+        <button id="button4" class="toggle-btn">Button</button>
+        <button id="button5" class="toggle-btn">Button</button>
+        <button id="button6" class="toggle-btn">Button</button>
+        <button id="button7" class="toggle-btn">Button</button>
+        <button id="button8" class="toggle-btn">Button</button>
+        <button id="button9" class="toggle-btn">Button</button>
+    </div>
+    <table class="table">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <script type="module" src="js/settings.js"></script>
 </body>
 </html>

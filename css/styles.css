@@ -1,3 +1,22 @@
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    background-color: #f8f9fa; /* Optional: background color */
+}
+
+.icon {
+    font-size: 24px; /* Adjust size */
+    cursor: pointer;
+    color: #333; /* Icon color */
+    transition: color 0.3s;
+}
+
+.icon:hover {
+    color: #007bff; /* Color on hover */
+}
+
 /* Basic styling to ensure that the upper and lower halves of the page are divided equally */
 body, html {
     height: 100%;
