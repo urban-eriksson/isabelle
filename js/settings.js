@@ -12,8 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
-
     // Retrieve the last pressed button ID from localStorage
     const lastPressedButtonId = localStorage.getItem('lastPressedButtonId');
 

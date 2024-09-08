@@ -1,5 +1,4 @@
-import {fetchAllData, transformItem} from './query.js'
-
+import {fetchAllData, transformItem, get_locations} from './query.js'
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -22,7 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Adding click event listener to toggle state
-        button.addEventListener('click', () => toggleButton(id));
+        button.addEventListener('click', () =>  {
+            toggleButton(id);
+            refreshTable(); // Refresh the table after toggling the button state
+        });
     });
 
     function toggleButton(buttonId) {
@@ -40,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Initial table load
     refreshTable();
 });
 
@@ -49,12 +52,14 @@ async function refreshTable() {
     
     // Array to store the union of locations
     let unionOfLocations = new Set();
+    let anyButtonOn = false;
 
     // Iterate over each button and check if it's in the 'on' state
     buttonsToCheck.forEach(buttonId => {
         const buttonState = localStorage.getItem(buttonId); // Retrieve 'on' or 'off' from localStorage
 
         if (buttonState === 'on') {
+            anyButtonOn = true; // At least one button is 'on'
             // Retrieve checked locations for this button from localStorage
             const checkedLocations = JSON.parse(localStorage.getItem(`checkedLocations_${buttonId}`)) || [];
             
@@ -63,18 +68,24 @@ async function refreshTable() {
         }
     });
 
-    // Convert the Set back to an array
-    const uniqueLocationsArray = Array.from(unionOfLocations);
+    // If none of the buttons 1, 4, or 7 are 'on', use the full list of locations
+    let uniqueLocationsArray;
+    if (!anyButtonOn) {
+        uniqueLocationsArray = get_locations(); // Get the full list of locations
+    } else {
+        uniqueLocationsArray = Array.from(unionOfLocations); // Use the union set of locations
+    }
 
     // Call fetchAllData with the unique union of locations
     const rawData = await fetchAllData(uniqueLocationsArray);
     const transformedData = rawData.map(item => transformItem(item));
     const sortedData = transformedData.sort((a, b) => a.date - b.date);
 
-
+    // Get table body and clear existing rows
     const tableBody = document.querySelector('.table tbody');
     tableBody.innerHTML = "";    
 
+    // Populate the table with new data
     sortedData.forEach(item => {
         const newRow = document.createElement('tr');
 
@@ -102,6 +113,3 @@ async function refreshTable() {
     });    
 
 }
-
-
-

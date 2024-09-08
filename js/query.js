@@ -28,7 +28,7 @@ export function transformItem(item) {
     console.log(item);
     var date = new Date(item.duration.start);
     const zeroPad = (num, places) => String(num).padStart(places, '0')
-    const location = item.businessUnit.location.replace("Stockholm -", "")
+    const location = item.businessUnit.name.replace("Stockholm -", "")
     let name = "---"
     if (item.instructors.length > 0) {
         name = item.instructors[0].name

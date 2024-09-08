@@ -35,13 +35,24 @@ body, html {
     justify-content: center;
 }
 
+/* Style the buttons with icons */
 .toggle-btn {
-    background-color: grey;
-    color: white;
-    border: none;
-    padding: 20px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
     font-size: 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toggle-btn i {
+    margin-right: 8px; /* Add space between icon and text */
+}
+
+.toggle-btn:hover {
+    background-color: #e0e0e0;
 }
 
 .list-container {
@@ -62,11 +73,14 @@ li {
     margin: 5px;
 }
 
+/* On state: Red background with white text */
 .button-on {
-    background-color: red;
+    background-color: #ff0000; /* Red background */
     color: white;
-  }
-  .button-off {
-    background-color: grey;
+}
+
+/* Off state: Default background and text color */
+.button-off {
+    background-color: #f0f0f0; /* Default background */
     color: black;
-  }
+}
