@@ -1,18 +1,36 @@
 <!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Isabelle</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1>Isabelles pass</h1>
 
+    <div class="header">
+        <i id="settings-icon" class="fas fa-cog icon"></i>
+    </div>
+
+    <div class="grid-container">
+        <!-- Creating a 3x3 grid of buttons -->
+        <button id="button1" class="toggle-btn"><i class="fas fa-map-marker-alt"></i></button>
+        <button id="button2" class="toggle-btn"><i class="fas fa-running"></i></button>
+        <button id="button3" class="toggle-btn"><i class="fas fa-user"></i></button>
+        <button id="button4" class="toggle-btn"><i class="fas fa-map-marker-alt"></i></button>
+        <button id="button5" class="toggle-btn"><i class="fas fa-running"></i></button>
+        <button id="button6" class="toggle-btn"><i class="fas fa-user"></i></button>
+        <button id="button7" class="toggle-btn"><i class="fas fa-map-marker-alt"></i></button>
+        <button id="button8" class="toggle-btn"><i class="fas fa-running"></i></button>
+        <button id="button9" class="toggle-btn"><i class="fas fa-user"></i></button>
+    </div>
     <table class="table">
         <thead></thead>
         <tbody></tbody>
     </table>
 
-    <script src="main.js"></script>
-
+    <script type="module" src="js/query.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
