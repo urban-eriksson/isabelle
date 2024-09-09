@@ -1,6 +1,6 @@
 // settings.js
 
-import { get_locations } from './query.js'
+import { getAllLocations, getActivities, getInstructors } from './query.js'
 
 document.addEventListener('DOMContentLoaded', function() {
     // Add event listener to the back icon
@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (lastPressedButton) {
             lastPressedButton.style.backgroundColor = 'red';
         }
+        refreshTable(lastPressedButtonId);
     }
 
     // Add event listeners to buttons to update localStorage and call refreshTable
@@ -38,50 +39,60 @@ document.addEventListener('DOMContentLoaded', function() {
             refreshTable(button.id);            
         });
     });
+
+
 });
 
-function refreshTable(selectedButtonId) {
-    // Call the get_locations function from query.js
-    const locations = get_locations();
+async function refreshTable(selectedButtonId) {
+    let items = [];
+    
+    // Determine what to display based on the selected button
+    if (['button2', 'button5', 'button8'].includes(selectedButtonId)) {
+        items = await getActivities();  // Get activities if button 2, 5, or 8 is pressed
+    } else if (['button3', 'button6', 'button9'].includes(selectedButtonId)) {
+        items = await getInstructors();  // Get instructors if button 3, 6, or 9 is pressed
+    } else {
+        items = getAllLocations();  // Default to locations if none of the above
+    }
     
     // Retrieve checked locations for the selected button from localStorage
-    let checkedLocations = JSON.parse(localStorage.getItem(`checkedLocations_${selectedButtonId}`)) || [];
+    let checkedItems = JSON.parse(localStorage.getItem(`checkedItems_${selectedButtonId}`)) || [];
     
     const tableBody = document.querySelector('.table tbody');
 
     // Clear existing rows
     tableBody.innerHTML = '';
 
-    // Populate the table with locations
-    locations.forEach(location => {
+    // Populate the table with the items (activities, instructors, or locations)
+    items.forEach(item => {
         const newRow = document.createElement('tr');
 
         // Create a new cell for the checkbox
         const checkboxCell = document.createElement('td');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.checked = checkedLocations.includes(location); 
+        checkbox.checked = checkedItems.includes(item); 
 
         // Add an event listener to update localStorage when the checkbox is toggled
         checkbox.addEventListener('change', function() {
-            // If the checkbox is checked, add the location to the array
+            // If the checkbox is checked, add the item to the array
             if (checkbox.checked) {
-                checkedLocations.push(location);
+                checkedItems.push(item);
             } else {
-                // If unchecked, remove the location from the array
-                checkedLocations = checkedLocations.filter(loc => loc !== location);
+                // If unchecked, remove the item from the array
+                checkedItems = checkedItems.filter(i => i !== item);
             }
             // Update the localStorage with the modified array
-            localStorage.setItem(`checkedLocations_${selectedButtonId}`, JSON.stringify(checkedLocations));
+            localStorage.setItem(`checkedItems_${selectedButtonId}`, JSON.stringify(checkedItems));
         });    
 
         checkboxCell.appendChild(checkbox);  // Add the checkbox to the cell
         newRow.appendChild(checkboxCell);    // Add the checkbox cell to the row
 
-        // Create a new cell for the location text
-        const locationCell = document.createElement('td');
-        locationCell.textContent = location; // Set the cell's text content to the location name
-        newRow.appendChild(locationCell);    // Add the location cell to the row
+        // Create a new cell for the item text
+        const itemCell = document.createElement('td');
+        itemCell.textContent = item; // Set the cell's text content to the item (location, activity, or instructor
+        newRow.appendChild(itemCell);    // Add the item cell to the row
 
         // Append the new row to the table body        
         tableBody.appendChild(newRow);

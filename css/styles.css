@@ -1,86 +1,119 @@
-
-.header {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-    background-color: #f8f9fa; /* Optional: background color */
-}
-
-.icon {
-    font-size: 24px; /* Adjust size */
-    cursor: pointer;
-    color: #333; /* Icon color */
-    transition: color 0.3s;
-}
-
-.icon:hover {
-    color: #007bff; /* Color on hover */
-}
-
-/* Basic styling to ensure that the upper and lower halves of the page are divided equally */
+/* General styles */
 body, html {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
 }
 
+.header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    background-color: #f8f9fa;
+}
+
+.icon {
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.icon:hover {
+    color: #007bff;
+}
+
+/* Reduce vertical spacing between buttons */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 10px;
-    height: 50%;
+    gap: 20px; /* Reduced gap between buttons */
+    padding: 5px;
+    height: 15%;
     background-color: #f4f4f4;
     align-items: center;
     justify-content: center;
 }
 
-/* Style the buttons with icons */
+/* Always maintain a 3x3 grid, even on small screens */
+@media (max-width: 480px) {
+    .toggle-btn {
+        font-size: 12px; /* Reduce font size for mobile */
+        padding: 5px; /* Reduce padding to fit in the grid */
+    }
+
+    .toggle-btn i {
+        margin-right: 4px; /* Smaller spacing between icon and text */
+    }
+}
+
+/* Style the buttons with icons and rounded edges */
 .toggle-btn {
     display: flex;
+    justify-content: center;
     align-items: center;
-    padding: 10px;
+    width: 100%; /* Full width for better button sizing */
+    padding: 8px; /* Reduced padding to make buttons smaller vertically */
     font-size: 16px;
     background-color: #f0f0f0;
     border: 1px solid #ddd;
     cursor: pointer;
     transition: background-color 0.3s;
+    text-align: center;
+    border-radius: 25px; /* Add round edges */
 }
 
-.toggle-btn i {
-    margin-right: 8px; /* Add space between icon and text */
-}
 
 .toggle-btn:hover {
     background-color: #e0e0e0;
 }
 
-.list-container {
-    height: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    background-color: #ddd;
-    padding: 10px;
-    margin: 5px;
-}
-
 /* On state: Red background with white text */
 .button-on {
-    background-color: #ff0000; /* Red background */
+    background-color: #ff0000;
     color: white;
+    border-radius: 25px; /* Ensure round edges when button is "on" */
 }
 
 /* Off state: Default background and text color */
 .button-off {
-    background-color: #f0f0f0; /* Default background */
+    background-color: #f0f0f0;
     color: black;
+}
+
+/* Table styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Wider leftmost column to ensure it fits on one line */
+.table th:first-child, .table td:first-child {
+    width: 25%; /* Increase width of the first column */
+    white-space: nowrap; /* Ensure it stays on one line */
+    overflow: visible;
+}
+.table th {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Responsive adjustments for table on small screens */
+@media (max-width: 480px) {
+    .table th, .table td {
+        padding: 6px;
+        font-size: 12px; /* Reduce font size for table data on mobile */
+    }
 }
