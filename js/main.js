@@ -1,43 +1,45 @@
 import {fetchAllData, transformItem, getAllLocations} from './query.js'
 
 document.addEventListener('DOMContentLoaded', function() {
+    const settingsIcon = document.getElementById('settings-icon');
 
-    // Add event listener to the settings icon
-    document.getElementById('settings-icon').addEventListener('click', function() {
-        window.location.href = 'settings.html'; // Redirects to the settings page
-    });
+    if (settingsIcon) {
+        settingsIcon.addEventListener('click', function() {
+            window.location.href = 'settings.html'; // Redirects to the settings page
+        });
+    }
 
     // Array of button ids
     const buttonIds = ['button1', 'button2', 'button3','button4', 'button5', 'button6','button7', 'button8', 'button9'];
 
+    const buttons = buttonIds.map(id => document.getElementById(id)); // Map button ids to DOM elements
+
     // Initialize or load button states
-    buttonIds.forEach(id => {
-        const storedState = localStorage.getItem(id);
-        const button = document.getElementById(id);
+    buttons.forEach(button => {
+        const storedState = localStorage.getItem(button.id);
+
         if (storedState === 'on') {
-            button.classList.add('button-on');
-        } else {
-            button.classList.add('button-off');
+            button.classList.add('active');
         }
 
         // Adding click event listener to toggle state
         button.addEventListener('click', () =>  {
-            toggleButton(id);
+            // Toggle the button's state
+            toggleButton(button.id);
             refreshTable(); // Refresh the table after toggling the button state
         });
     });
 
+    // Toggle button state function
     function toggleButton(buttonId) {
         const button = document.getElementById(buttonId);
-        const isOn = button.classList.contains('button-on');
+        const isActive = button.classList.contains('active');
 
-        if (isOn) {
-            button.classList.remove('button-on');
-            button.classList.add('button-off');
+        if (isActive) {
+            button.classList.remove('active'); // Remove 'active' state
             localStorage.setItem(buttonId, 'off');
         } else {
-            button.classList.remove('button-off');
-            button.classList.add('button-on');
+            button.classList.add('active'); // Add 'active' state
             localStorage.setItem(buttonId, 'on');
         }
     }
@@ -51,54 +53,33 @@ async function refreshTable() {
     const locationButtons = ['button1', 'button4', 'button7'];
     const activityButtons = ['button2', 'button5', 'button8'];
     const instructorButtons = ['button3', 'button6', 'button9'];
-    
-    // Arrays to store checked items from localStorage
-    let unionOfLocations = new Set();
-    let checkedActivities = new Set();
-    let checkedInstructors = new Set();
-    let anyLocationButtonOn = false;
-    let anyActivityButtonOn = false;
-    let anyInstructorButtonOn = false;
 
-    // Retrieve and combine checked locations from buttons 1, 4, and 7
-    locationButtons.forEach(buttonId => {
-        const buttonState = localStorage.getItem(buttonId); // Retrieve 'on' or 'off' from localStorage
+    // Helper function to retrieve and combine checked items from buttons
+    const getCheckedItemsFromStorage = (buttons) => {
+        let combinedSet = new Set();
+        let anyButtonOn = false;
 
-        if (buttonState === 'on') {
-            anyLocationButtonOn = true; // At least one location button is 'on'
-            const checkedLocations = JSON.parse(localStorage.getItem(`checkedItems_${buttonId}`)) || [];
-            checkedLocations.forEach(location => unionOfLocations.add(location)); // Add locations to the union set
-        }
-    });
+        buttons.forEach(buttonId => {
+            const buttonState = localStorage.getItem(buttonId); // Retrieve 'on' or 'off' from localStorage
+            if (buttonState === 'on') {
+                anyButtonOn = true;
+                const storedCheckedItems = JSON.parse(localStorage.getItem(`checkedItems_${buttonId}`)) || [];
+                storedCheckedItems.forEach(item => combinedSet.add(item));
+            }
+        });
 
-    // Retrieve and combine checked activities from buttons 2, 5, and 8 if they are 'on'
-    activityButtons.forEach(buttonId => {
-        const buttonState = localStorage.getItem(buttonId); // Retrieve 'on' or 'off' from localStorage
-        if (buttonState === 'on') {
-            anyActivityButtonOn = true; // At least one activity button is 'on'
-            const checkedItems = JSON.parse(localStorage.getItem(`checkedItems_${buttonId}`)) || [];
-            checkedItems.forEach(activity => checkedActivities.add(activity)); // Add activities to the set
-        }
-    });
+        return { combinedSet, anyButtonOn };
+    };
 
-    // Retrieve and combine checked instructors from buttons 3, 6, and 9 if they are 'on'
-    instructorButtons.forEach(buttonId => {
-        const buttonState = localStorage.getItem(buttonId); // Retrieve 'on' or 'off' from localStorage
-        if (buttonState === 'on') {
-            anyInstructorButtonOn = true; // At least one instructor button is 'on'
-            const checkedItems = JSON.parse(localStorage.getItem(`checkedItems_${buttonId}`)) || [];
-            checkedItems.forEach(instructor => checkedInstructors.add(instructor)); // Add instructors to the set
-        }
-    });
-
+    // Retrieve and combine checked locations, activities, and instructors
+    const { combinedSet: unionOfLocations, anyButtonOn: anyLocationButtonOn } = getCheckedItemsFromStorage(locationButtons);
+    const { combinedSet: checkedActivities, anyButtonOn: anyActivityButtonOn } = getCheckedItemsFromStorage(activityButtons);
+    const { combinedSet: checkedInstructors, anyButtonOn: anyInstructorButtonOn } = getCheckedItemsFromStorage(instructorButtons);
 
     // Determine if location filtering should be applied
-    let uniqueLocationsArray;
-    if (anyLocationButtonOn && unionOfLocations.size > 0) {
-        uniqueLocationsArray = Array.from(unionOfLocations); // Use the union set of locations if any locations are selected
-    } else {
-        uniqueLocationsArray = getAllLocations(); // Use the full list of locations if no location filter is applied
-    }
+    let uniqueLocationsArray = (anyLocationButtonOn && unionOfLocations.size > 0)
+        ? Array.from(unionOfLocations)
+        : getAllLocations(); // Use the full list of locations if no filter is applied
 
     // Fetch data based on the locations
     const rawData = await fetchAllData(uniqueLocationsArray);
@@ -108,8 +89,7 @@ async function refreshTable() {
     const filteredData = transformedData.filter(item => {
         const activityMatches = !anyActivityButtonOn || checkedActivities.size === 0 || checkedActivities.has(item.activity);  // Match all if no activities are checked
         const instructorMatches = !anyInstructorButtonOn || checkedInstructors.size === 0 || checkedInstructors.has(item.instructor);  // Match all if no instructors are checked
-    
-        return activityMatches && instructorMatches;  // Include items that match both filters, if applied
+        return activityMatches && instructorMatches;  // Include items that match both activity and instructor if active
     });
 
     const sortedData = filteredData.sort((a, b) => a.date - b.date);
@@ -122,27 +102,13 @@ async function refreshTable() {
     sortedData.forEach(item => {
         const newRow = document.createElement('tr');
 
-        // Create a new cell for each field
-        const dateCell = document.createElement('td');
-        dateCell.textContent = item.startTime;
+        // Create and append new cells for each field
+        ['startTime', 'location', 'activity', 'instructor'].forEach(field => {
+            const cell = document.createElement('td');
+            cell.textContent = item[field];
+            newRow.appendChild(cell);
+        });
 
-        const locationCell = document.createElement('td');
-        locationCell.textContent = item.location;
-
-        const activityCell = document.createElement('td');
-        activityCell.textContent = item.activity;
-
-        const instructorCell = document.createElement('td');
-        instructorCell.textContent = item.instructor;
-
-        // Append cells to the row
-        newRow.appendChild(dateCell);
-        newRow.appendChild(locationCell);
-        newRow.appendChild(activityCell);
-        newRow.appendChild(instructorCell);
-
-        // Append the row to the table body
         tableBody.appendChild(newRow);
     });    
-
 }

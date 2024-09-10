@@ -47,38 +47,34 @@ body, html {
     }
 }
 
-/* Style the buttons with icons and rounded edges */
+/* Active button state - buttons that are 'on' */
+.toggle-btn.active {
+    background-color: red;
+    color: white; /* Optional: text color for better readability */
+}
+
+/* Default button styles (non-active state) */
 .toggle-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%; /* Full width for better button sizing */
-    padding: 8px; /* Reduced padding to make buttons smaller vertically */
-    font-size: 16px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-align: center;
-    border-radius: 25px; /* Add round edges */
-}
-
-
-.toggle-btn:hover {
-    background-color: #e0e0e0;
-}
-
-/* On state: Red background with white text */
-.button-on {
-    background-color: #ff0000;
-    color: white;
-    border-radius: 25px; /* Ensure round edges when button is "on" */
-}
-
-/* Off state: Default background and text color */
-.button-off {
     background-color: #f0f0f0;
     color: black;
+    border: 1px solid #ddd;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 25px; /* Rounded corners */
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+/* Hover effect for non-active buttons */
+
+.toggle-btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+    .toggle-btn:hover {
+        box-shadow: none; /* Remove hover effect on touch devices */
+    }
 }
 
 /* Table styling */

@@ -1,12 +1,9 @@
-// settings.js
-
 import { getAllLocations, getActivities, getInstructors } from './query.js'
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener to the back icon
     const backIcon = document.getElementById('back-icon');
     
-    if (backIcon) {  // Ensure the element exists before adding the event listener
+    if (backIcon) {
         backIcon.addEventListener('click', function() {
             window.location.href = 'index.html'; // Redirects to the index page
         });
@@ -16,10 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const lastPressedButtonId = localStorage.getItem('lastPressedButtonId');
 
     if (lastPressedButtonId) {
-        // Find the button with the stored ID and change its background color to red
         const lastPressedButton = document.getElementById(lastPressedButtonId);
         if (lastPressedButton) {
-            lastPressedButton.style.backgroundColor = 'red';
+            lastPressedButton.classList.add('active'); // Apply the 'active' class
         }
         refreshTable(lastPressedButtonId);
     }
@@ -32,15 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('lastPressedButtonId', button.id);
 
             // Update the button styles
-            buttons.forEach(btn => btn.style.backgroundColor = ''); // Reset all button colors
-            button.style.backgroundColor = 'red'; // Highlight the clicked button
+            buttons.forEach(btn => btn.classList.remove('active')); // Remove 'active' class from all buttons
+            button.classList.add('active'); // Add 'active' class to clicked button
 
             // Call the refreshTable function when a button is clicked
             refreshTable(button.id);            
         });
     });
-
-
 });
 
 async function refreshTable(selectedButtonId) {

@@ -33,7 +33,8 @@ async function fetchData(businessUnit) {
     console.log(`Fetching fresh data for business unit ${businessUnit}`);
     const now = Date.now();
     const start = (new Date(now)).toISOString().replaceAll(":", "%3A");
-    const end = (new Date(now + 518400000)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"    
+    const duration = 1123200000; // 13 days in milliseconds
+    const end = (new Date(now + duration)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"    
     const url = `https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/${businessUnit}/groupactivities?period.end=${end}&period.start=${start}&webCategory=22`;
 
     const response = await fetch(url);
@@ -69,7 +70,6 @@ export async function fetchAllData(locationsArray) {
 export function getAllLocations() {
     return gyms.map(gym => gym.location);
 }
-
 
 // Function to transform the fetched data
 export function transformItem(item) {
@@ -109,9 +109,4 @@ export function getInstructors() {
 // Function to get unique activities
 export function getActivities() {
     return getUniqueItems(item => item.activity);
-}
-
-function filterData(data) {
-    return data;
-    // return data.filter(item => item.instructors.some(instructor => instructor.name == "Isabelle Badéa"));
 }
