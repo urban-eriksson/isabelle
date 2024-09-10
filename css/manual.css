@@ -1,0 +1,58 @@
+/* General styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    align-items: center; /* Aligns back icon and title vertically */
+    padding: 10px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for separation */
+}
+
+.header i.icon {
+    margin-right: 10px; /* Adds space between back icon and title */
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.header i.icon:hover {
+    color: #007bff;
+}
+
+.content {
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+ul {
+    margin-left: 20px;
+    list-style-type: disc;
+}
+
+p {
+    line-height: 1.6;
+}
+
+/* Ensure images fit well */
+img {
+    display: block;
+    margin: 20px 0;
+    max-width: 100%;
+    height: auto;
+}

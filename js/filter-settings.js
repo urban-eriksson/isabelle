@@ -1,4 +1,4 @@
-import { getAllLocations, getActivities, getInstructors } from './query.js'
+import { getAllLocations, getActivities, getInstructors } from './api.js'
 
 document.addEventListener('DOMContentLoaded', function() {
     const backIcon = document.getElementById('back-icon');

@@ -1,11 +1,17 @@
-import {fetchAllData, transformItem, getAllLocations} from './query.js'
+import {fetchAllData, transformItem, getAllLocations} from './api.js'
 
 document.addEventListener('DOMContentLoaded', function() {
-    const settingsIcon = document.getElementById('settings-icon');
+    const infoIcon = document.getElementById('info-icon');
+    if (infoIcon) {
+        infoIcon.addEventListener('click', function() {
+            window.location.href = 'manual.html'; // Redirect to the manual page
+        });
+    }
 
+    const settingsIcon = document.getElementById('settings-icon');
     if (settingsIcon) {
         settingsIcon.addEventListener('click', function() {
-            window.location.href = 'settings.html'; // Redirects to the settings page
+            window.location.href = 'filter-settings.html'; // Redirects to the settings page
         });
     }
 

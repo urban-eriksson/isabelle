@@ -1,4 +1,4 @@
-import {gyms} from './gymsData.js'
+import {gyms} from './gyms-data.js'
 
 let cache = {};  // In-memory cache
 let cacheTimestamp = null;  // Global timestamp for cache validation
