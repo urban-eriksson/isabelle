@@ -4,7 +4,15 @@ body, html {
     margin: 0;
     font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden;
 }
 
 .header {
@@ -14,6 +22,8 @@ body, html {
     padding: 10px;
     background-color: #f8f9fa;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for separation */
+    z-index: 1000; /* Ensure it stays on top */ 
+    margin: 0;  
 }
 
 .icon {
@@ -35,11 +45,20 @@ body, html {
     padding: 20px;
     background-color: #f4f4f4;
     align-items: center;
-    justify-content: center;
+    justify-content: center;    
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Visual separation */
-    position: sticky; /* Fix the button section to the top */
-    top: 0;
-    z-index: 1000; /* Ensure it stays above the table */    
+}
+
+.grid-container > * {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+
+.table-container {
+    flex-grow: 1; /* This allows the table container to take up the remaining space */
+    overflow-y: auto; /* Make the table scrollable */
 }
 
 /* Default button styles (non-active state) */
@@ -84,7 +103,6 @@ body, html {
 .table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
 .table th, .table td {
