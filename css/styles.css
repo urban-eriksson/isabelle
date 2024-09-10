@@ -3,6 +3,8 @@ body, html {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;    
 }
 
 .header {
@@ -10,6 +12,7 @@ body, html {
     justify-content: flex-end;
     padding: 10px;
     background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for separation */
 }
 
 .icon {
@@ -27,45 +30,37 @@ body, html {
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px; /* Reduced gap between buttons */
-    padding: 5px;
-    height: 15%;
+    gap: 20px; 
+    padding: 20px;
     background-color: #f4f4f4;
     align-items: center;
     justify-content: center;
-}
-
-/* Always maintain a 3x3 grid, even on small screens */
-@media (max-width: 480px) {
-    .toggle-btn {
-        font-size: 12px; /* Reduce font size for mobile */
-        padding: 5px; /* Reduce padding to fit in the grid */
-    }
-
-    .toggle-btn i {
-        margin-right: 4px; /* Smaller spacing between icon and text */
-    }
-}
-
-/* Active button state - buttons that are 'on' */
-.toggle-btn.active {
-    background-color: red;
-    color: white; /* Optional: text color for better readability */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Visual separation */
+    position: sticky; /* Fix the button section to the top */
+    top: 0;
+    z-index: 1000; /* Ensure it stays above the table */    
 }
 
 /* Default button styles (non-active state) */
 .toggle-btn {
+    width: 70px; /* Make the buttons circular */
+    height: 70px; /* Same width and height */
     background-color: #f0f0f0;
     color: black;
     border: 1px solid #ddd;
-    padding: 10px;
     cursor: pointer;
-    border-radius: 25px; /* Rounded corners */
+    border-radius: 50%; /* Make the button completely circular */
     transition: background-color 0.3s, box-shadow 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toggle-btn i {
+    font-size: 20px; /* Increase the size of the icons */
 }
 
 /* Hover effect for non-active buttons */
-
 .toggle-btn:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
 }
@@ -76,6 +71,13 @@ body, html {
         box-shadow: none; /* Remove hover effect on touch devices */
     }
 }
+
+/* Active button state - buttons that are 'on' */
+.toggle-btn.active {
+    background-color: red;
+    color: white; /* Optional: text color for better readability */
+}
+
 
 /* Table styling */
 .table {
@@ -92,16 +94,22 @@ body, html {
     overflow: hidden;
 }
 
-/* Wider leftmost column to ensure it fits on one line */
-.table th:first-child, .table td:first-child {
-    width: 25%; /* Increase width of the first column */
-    white-space: nowrap; /* Ensure it stays on one line */
-    overflow: visible;
-}
-.table th {
-    background-color: #f8f9fa;
+/* Two-column layout for main.html table */
+.main-table td:first-child {
+    width: 25%; /* Wider for the date */
 }
 
+.main-table td:nth-child(2) {
+    display: flex;
+    flex-direction: column; /* Make the second column a vertical list */
+}
+
+/* Table in settings.html with narrower checkbox column */
+.settings-table td:first-child {
+    width: 10%; /* Narrower checkbox column */
+}
+
+/* Even rows styling for table */
 .table tbody tr:nth-child(even) {
     background-color: #f2f2f2;
 }
@@ -110,6 +118,6 @@ body, html {
 @media (max-width: 480px) {
     .table th, .table td {
         padding: 6px;
-        font-size: 12px; /* Reduce font size for table data on mobile */
+        font-size: 12px;
     }
 }
