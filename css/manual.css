@@ -1,5 +1,6 @@
 /* General styles */
-body, html {
+body,
+html {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
@@ -9,14 +10,15 @@ body, html {
 
 .header {
     display: flex;
-    align-items: center; /* Aligns back icon and title vertically */
+    align-items: center;
+    /* Aligns back icon and title vertically */
     padding: 10px;
     background-color: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for separation */
 }
 
 .header i.icon {
-    margin-right: 10px; /* Adds space between back icon and title */
+    margin-right: 10px;
+    /* Adds space between back icon and title */
     font-size: 24px;
     cursor: pointer;
     color: #333;
@@ -29,6 +31,7 @@ body, html {
 
 .content {
     padding: 20px;
+    background-color: #f4f4f4;
 }
 
 h1 {

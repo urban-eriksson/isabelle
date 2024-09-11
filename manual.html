@@ -1,77 +1,102 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Användarmanual - Isabelle Webapp</title>
+    <title>Användarmanual</title>
     <link rel="stylesheet" href="css/manual.css"> <!-- Optional, link to your CSS file for manual-specific styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
 
     <div class="header">
         <!-- Back icon to return to the main page -->
         <i id="back-icon" class="fas fa-arrow-left icon" aria-label="Back" title="Tillbaka till startsidan"></i>
-        <h1>Användarmanual</h1>
     </div>
 
     <div class="content">
+        <h1>Användarmanual</h1>
         <h2>Inledning</h2>
-        <p>Denna applikation hjälper dig att filtrera gymaktiviteter baserat på plats, aktiviteter och instruktörer. I denna manual kommer vi att gå igenom hur du navigerar och använder webappen effektivt.</p>
+        <p>Denna applikation hjälper dig att filtrera gymaktiviteter baserat på plats, aktiviteter och instruktörer. I
+            denna manual kommer vi att gå igenom hur du navigerar och använder webappen effektivt.</p>
 
         <h2>Navigering</h2>
         <h3>Översikt</h3>
         <p>Webappen består av tre huvudsakliga delar:</p>
         <ul>
-            <li><strong>Menyraden</strong> - Överst finns två ikoner: en <strong>informationsikon</strong> till vänster för att komma till denna manual, och en <strong>filterikon</strong> till höger för att ställa in filter för gymaktiviteter.</li>
-            <li><strong>Filterknappar</strong> - Nedanför menyraden hittar du en uppsättning av runda knappar som representerar filteralternativ (plats, aktivitet och instruktör).</li>
-            <li><strong>Aktivitetstabell</strong> - Under filterknapparna finns en tabell som listar gymaktiviteter baserat på de valda filtren.</li>
+            <li><strong>Menyraden</strong> - Överst finns två ikoner: en <strong>informationsikon</strong> till vänster
+                för att komma till denna manual, och en <strong>filterikon</strong> till höger för att ställa in filter
+                för gymaktiviteter.</li>
+            <li><strong>Filterknappar</strong> - Nedanför menyraden hittar du en uppsättning av runda knappar som
+                representerar filteralternativ (plats, aktivitet och instruktör).</li>
+            <li><strong>Aktivitetstabell</strong> - Under filterknapparna finns en tabell som listar gymaktiviteter
+                baserat på de valda filtren.</li>
         </ul>
 
         <h2>Menyraden</h2>
         <p>
-            <strong>Informationsikon (till vänster)</strong> - Genom att klicka på denna ikon kommer du till användarmanualen. Det är en <strong>informationsikon</strong> som ser ut som en cirkel med ett "i" inuti.<br>
-            <strong>Filterikon (till höger)</strong> - Denna ikon öppnar filtret där du kan välja gym, aktiviteter eller instruktörer. Ikonen är formad som en <strong>filtertratt</strong>.
+            <strong>Informationsikon (till vänster)</strong> - Genom att klicka på denna ikon kommer du till
+            användarmanualen. Det är en <strong>informationsikon</strong> som ser ut som en cirkel med ett "i"
+            inuti.<br>
+            <strong>Filterikon (till höger)</strong> - Denna ikon öppnar filtret där du kan välja gym, aktiviteter eller
+            instruktörer. Ikonen är formad som en <strong>filtertratt</strong>.
         </p>
         <!-- Placeholder for menu image -->
-        <img src="./images/menu-image.png" alt="Menyrad med informationsikon och filterikon" style="max-width: 100%; height: auto;">
+        <img src="./images/menu-image.png" alt="Menyrad med informationsikon och filterikon"
+            style="max-width: 100%; height: auto;">
 
         <h2>Filtrera Aktiviteter</h2>
         <p>
-            <strong>Knapparna för att ställa in filter</strong>: Det finns nio runda knappar som låter dig välja plats, aktivitet och instruktör:
+            <strong>Knapparna för att ställa in filter</strong>: Det finns nio runda knappar som låter dig välja plats,
+            aktivitet och instruktör:
         </p>
         <ul>
-            <li><strong>Platsfilter</strong>: Knappar märkta med en platsikon (pin-ikon) låter dig välja vilket gym du vill se aktiviteter från.</li>
-            <li><strong>Aktivitetsfilter</strong>: Knappar med en löparikon representerar olika gymaktiviteter (t.ex. löpning, yoga).</li>
-            <li><strong>Instruktörsfilter</strong>: Knappar med en personikon låter dig välja specifika instruktörer.</li>
+            <li><strong>Platsfilter</strong>: Knappar märkta med en platsikon (pin-ikon) låter dig välja vilket gym du
+                vill se aktiviteter från.</li>
+            <li><strong>Aktivitetsfilter</strong>: Knappar med en löparikon representerar olika gymaktiviteter (t.ex.
+                löpning, yoga).</li>
+            <li><strong>Instruktörsfilter</strong>: Knappar med en personikon låter dig välja specifika instruktörer.
+            </li>
         </ul>
         <p>
             <strong>Så här använder du filtren</strong>:<br>
-            Klicka på en knapp för att aktivera eller avaktivera ett filter. När knappen är <strong>röd</strong>, betyder det att filtret är aktivt. Du kan kombinera flera filter för att finjustera sökresultaten.
+            Klicka på en knapp för att aktivera eller avaktivera ett filter. När knappen är <strong>röd</strong>,
+            betyder det att filtret är aktivt. Du kan kombinera flera filter för att finjustera sökresultaten.
         </p>
         <!-- Placeholder for filter buttons image -->
-        <img src="./images/filter-buttons-image.png" alt="Filterknappar för gym, aktiviteter och instruktörer" style="max-width: 100%; height: auto;">
+        <img src="./images/filter-buttons-image.png" alt="Filterknappar för gym, aktiviteter och instruktörer"
+            style="max-width: 100%; height: auto;">
 
         <h2>Visa Aktiviteter</h2>
         <p>
-            Efter att du har valt dina filter visas resultaten i en tabell under knapparna. Tabellen visar följande information:
+            Efter att du har valt dina filter visas resultaten i en tabell under knapparna. Tabellen visar följande
+            information:
         </p>
         <ul>
             <li><strong>Datum och tid</strong> för aktiviteten.</li>
-            <li><strong>Typ av aktivitet</strong> (t.ex. yoga, spinning).</li>
             <li><strong>Plats</strong> där aktiviteten hålls.</li>
+            <li><strong>Typ av aktivitet</strong> (t.ex. yoga, spinning).</li>
             <li><strong>Instruktör</strong> som leder aktiviteten.</li>
         </ul>
         <p>Tabellen uppdateras automatiskt när du ändrar dina filter.</p>
         <!-- Placeholder for activity table image -->
-        <img src="./images/activity-table-image.png" alt="Tabell över filtrerade gymaktiviteter" style="max-width: 100%; height: auto;">
+        <img src="./images/activity-table-image.png" alt="Tabell över filtrerade gymaktiviteter"
+            style="max-width: 100%; height: auto;">
 
         <h2>Vanliga frågor (FAQ)</h2>
+        <h3>Varför finns inte min favoritinstruktör med i instruktörslistan?</h3>
+        <p>Instruktörslistan utgår från dom aktiviteter som finns två veckor fram i tiden. Ej tidigare selekterade
+            instruktörer som inte har någon aktivitet kommer därför inte att vara valbara.</p>
+
         <h3>Hur filtrerar jag aktiviteter?</h3>
-        <p>Använd de runda knapparna för att välja plats, aktivitet och instruktör. Filtret tillämpas direkt när du klickar på en knapp.</p>
+        <p>Använd de runda knapparna för att välja en eller flera av plats, aktivitet och instruktör. Filtren tillämpas
+            i kombination direkt när du klickar på en knapp.</p>
 
         <h3>Varför visas inga aktiviteter?</h3>
-        <p>Kontrollera att minst ett filter är aktivt. Om inga filter är valda visas inga aktiviteter.</p>
+        <p>Om inga aktiviter stämmer in på de sammanlagda kriterier de aktiverade knapparna definierar kommmer inga
+            aktiviter att visas.</p>
 
         <h3>Hur återställer jag filtren?</h3>
         <p>Klicka igen på en röd knapp för att avaktivera det specifika filtret.</p>
@@ -80,20 +105,25 @@
         <p>Använd pilikonen längst upp till vänster på alla sidor för att navigera tillbaka till huvudsidan.</p>
 
         <h2>Avslutning</h2>
-        <p>Webappen är utformad för att göra det enkelt att filtrera och hitta gymaktiviteter som passar dina preferenser. Om du har några frågor eller problem kan du alltid återkomma till denna manual genom att klicka på informationsikonen i menyn.</p>
-        
-        <p>För mer information om koden, besök gärna Github-repot: <a href="https://github.com/urban-eriksson/isabelle" target="_blank">https://github.com/urban-eriksson/isabelle</a></p>
-        
-        <p>Denna app är utvecklad av <strong>Urban Eriksson</strong>. Om du har frågor eller behöver komma i kontakt med mig, skicka ett e-postmeddelande till: <a href="mailto:molluscuous@gmail.com">molluscuous@gmail.com</a>.</p>
-        
+        <p>Webappen är utformad för att göra det enkelt att filtrera och hitta gymaktiviteter som passar dina
+            preferenser. Om du har några frågor eller problem kan du alltid återkomma till denna manual genom att klicka
+            på informationsikonen i menyn.</p>
+
+        <p>För mer information om koden, besök gärna Github-repot: <a href="https://github.com/urban-eriksson/isabelle"
+                target="_blank">https://github.com/urban-eriksson/isabelle</a></p>
+
+        <p>Denna app är utvecklad av <strong>Urban Eriksson</strong>. Om du har frågor eller behöver komma i kontakt med
+            mig, skicka ett e-postmeddelande till: <a href="mailto:molluscuous@gmail.com">molluscuous@gmail.com</a>.</p>
+
     </div>
 
     <script>
         // Add event listener for back icon to return to index.html
-        document.getElementById('back-icon').addEventListener('click', function() {
+        document.getElementById('back-icon').addEventListener('click', function () {
             window.location.href = 'index.html'; // Redirect back to the main page
         });
     </script>
 
 </body>
+
 </html>

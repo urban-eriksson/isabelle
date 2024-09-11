@@ -1,5 +1,6 @@
 /* General styles */
-body, html {
+body,
+html {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
@@ -11,19 +12,19 @@ body, html {
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Full viewport height */
+    height: 100vh;
+    /* Full viewport height */
     overflow: hidden;
 }
 
 .header {
     display: flex;
-    justify-content: space-between; /* Spread the icons to left and right */
-    align-items: center; /* Vertically align icons */
+    justify-content: space-between;
+    /* Spread the icons to left and right */
+    align-items: center;
+    /* Vertically align icons */
     padding: 10px;
     background-color: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for separation */
-    z-index: 1000; /* Ensure it stays on top */ 
-    margin: 0;  
 }
 
 .icon {
@@ -41,35 +42,41 @@ body, html {
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px; 
+    gap: 20px;
     padding: 20px;
     background-color: #f4f4f4;
-    align-items: center;
-    justify-content: center;    
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Visual separation */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Visual separation */
 }
 
-.grid-container > * {
+.grid-container>* {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
 }
 
 
 .table-container {
-    flex-grow: 1; /* This allows the table container to take up the remaining space */
-    overflow-y: auto; /* Make the table scrollable */
+    flex-grow: 1;
+    /* This allows the table container to take up the remaining space */
+    overflow-y: auto;
+    /* Make the table scrollable */
 }
 
 /* Default button styles (non-active state) */
 .toggle-btn {
-    width: 70px; /* Make the buttons circular */
-    height: 70px; /* Same width and height */
+    width: 70px;
+    /* Make the buttons circular */
+    height: 70px;
+    /* Same width and height */
     background-color: #f0f0f0;
     color: black;
     border: 1px solid #ddd;
     cursor: pointer;
-    border-radius: 50%; /* Make the button completely circular */
+    border-radius: 50%;
+    /* Make the button completely circular */
     transition: background-color 0.3s, box-shadow 0.3s;
     display: flex;
     justify-content: center;
@@ -77,25 +84,29 @@ body, html {
 }
 
 .toggle-btn i {
-    font-size: 20px; /* Increase the size of the icons */
+    font-size: 20px;
+    /* Increase the size of the icons */
 }
 
 /* Hover effect for non-active buttons */
 .toggle-btn:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Add shadow on hover */
 }
 
 /* Disable hover effects on touch devices */
 @media (hover: none) {
     .toggle-btn:hover {
-        box-shadow: none; /* Remove hover effect on touch devices */
+        box-shadow: none;
+        /* Remove hover effect on touch devices */
     }
 }
 
 /* Active button state - buttons that are 'on' */
 .toggle-btn.active {
     background-color: red;
-    color: white; /* Optional: text color for better readability */
+    color: white;
+    /* Optional: text color for better readability */
 }
 
 
@@ -105,7 +116,8 @@ body, html {
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-overflow: ellipsis;
@@ -113,19 +125,43 @@ body, html {
     overflow: hidden;
 }
 
-/* Two-column layout for main.html table */
 .main-table td:first-child {
-    width: 25%; /* Wider for the date */
+    width: 25%;
+    /* Left column wider for the date */
+    text-align: left;
+    /* Align text to the left */
+    white-space: nowrap;
 }
 
 .main-table td:nth-child(2) {
+    width: 75%;
+    /* Right column for activity, location, and instructor */
+}
+
+.main-table .details {
     display: flex;
-    flex-direction: column; /* Make the second column a vertical list */
+    flex-direction: column;
+    /* Stack the details vertically */
+}
+
+.main-table .activity,
+.main-table .location,
+.main-table .instructor {
+    display: block;
+    /* Each detail will be a separate line */
+}
+
+.main-table .activity i,
+.main-table .location i,
+.main-table .instructor i {
+    margin-right: 5px;
+    /* Add some space between icon and text */
 }
 
 /* Table in settings.html with narrower checkbox column */
 .settings-table td:first-child {
-    width: 10%; /* Narrower checkbox column */
+    width: 10%;
+    /* Narrower checkbox column */
 }
 
 /* Even rows styling for table */
@@ -135,7 +171,9 @@ body, html {
 
 /* Responsive adjustments for table on small screens */
 @media (max-width: 480px) {
-    .table th, .table td {
+
+    .table th,
+    .table td {
         padding: 6px;
         font-size: 12px;
     }

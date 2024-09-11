@@ -1,4 +1,4 @@
-import {gyms} from './gyms-data.js'
+import { gyms } from './gyms-data.js'
 
 let cache = {};  // In-memory cache
 let cacheTimestamp = null;  // Global timestamp for cache validation
@@ -34,7 +34,7 @@ async function fetchData(businessUnit) {
     const now = Date.now();
     const start = (new Date(now)).toISOString().replaceAll(":", "%3A");
     const duration = 1123200000; // 13 days in milliseconds
-    const end = (new Date(now + duration)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"    
+    const end = (new Date(now + duration)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"
     const url = `https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/${businessUnit}/groupactivities?period.end=${end}&period.start=${start}&webCategory=22`;
 
     const response = await fetch(url);
@@ -51,12 +51,12 @@ function getGymIdsFromLocations(locations) {
     return gyms
         .filter(gym => locations.includes(gym.location))  // Filter gyms by matching locations
         .map(gym => gym.id);  // Map the filtered gyms to their IDs
-}    
+}
 
 
 export async function fetchAllData(locationsArray) {
     // First, check if the cache needs to be invalidated
-    invalidateCacheIfNeeded();    
+    invalidateCacheIfNeeded();
 
     const gymIds = getGymIdsFromLocations(locationsArray);
 
@@ -78,8 +78,8 @@ export function transformItem(item) {
     var date = new Date(item.duration.start);
     const zeroPad = (num, places) => String(num).padStart(places, '0')
     const location = item.businessUnit.name.replace("Stockholm -", "")
-    const instructor = item.instructors.length > 1 
-        ? `${item.instructors[0].name} m. fl.` 
+    const instructor = item.instructors.length > 1
+        ? `${item.instructors[0].name} m. fl.`
         : (item.instructors[0]?.name || "---");
 
     return {

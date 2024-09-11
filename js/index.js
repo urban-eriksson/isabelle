@@ -1,22 +1,22 @@
-import {fetchAllData, transformItem, getAllLocations} from './api.js'
+import { fetchAllData, transformItem, getAllLocations } from './api.js'
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const infoIcon = document.getElementById('info-icon');
     if (infoIcon) {
-        infoIcon.addEventListener('click', function() {
+        infoIcon.addEventListener('click', function () {
             window.location.href = 'manual.html'; // Redirect to the manual page
         });
     }
 
     const settingsIcon = document.getElementById('settings-icon');
     if (settingsIcon) {
-        settingsIcon.addEventListener('click', function() {
+        settingsIcon.addEventListener('click', function () {
             window.location.href = 'filter-settings.html'; // Redirects to the settings page
         });
     }
 
     // Array of button ids
-    const buttonIds = ['button1', 'button2', 'button3','button4', 'button5', 'button6','button7', 'button8', 'button9'];
+    const buttonIds = ['button1', 'button2', 'button3', 'button4', 'button5', 'button6', 'button7', 'button8', 'button9'];
 
     const buttons = buttonIds.map(id => document.getElementById(id)); // Map button ids to DOM elements
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Adding click event listener to toggle state
-        button.addEventListener('click', () =>  {
+        button.addEventListener('click', () => {
             // Toggle the button's state
             toggleButton(button.id);
             refreshTable(); // Refresh the table after toggling the button state
@@ -102,19 +102,44 @@ async function refreshTable() {
 
     // Get table body and clear existing rows
     const tableBody = document.querySelector('.table tbody');
-    tableBody.innerHTML = "";    
+    tableBody.innerHTML = "";
 
     // Populate the table with new data
     sortedData.forEach(item => {
         const newRow = document.createElement('tr');
 
-        // Create and append new cells for each field
-        ['startTime', 'location', 'activity', 'instructor'].forEach(field => {
-            const cell = document.createElement('td');
-            cell.textContent = item[field];
-            newRow.appendChild(cell);
-        });
+        // First cell for the date
+        const dateCell = document.createElement('td');
+        dateCell.textContent = item.startTime;
+        newRow.appendChild(dateCell);
 
+        // Second cell for activity, location, and instructor (stacked vertically)
+        const detailsCell = document.createElement('td');
+        const detailsDiv = document.createElement('div');
+        detailsDiv.classList.add('details');  // Add a class for styling
+
+        const locationSpan = document.createElement('span');
+        locationSpan.classList.add('location');
+        locationSpan.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${item.location}`;  // Add the icon and text
+
+        const activitySpan = document.createElement('span');
+        activitySpan.classList.add('activity');
+        activitySpan.innerHTML = `<i class="fas fa-running"></i> ${item.activity}`;  // Add the icon and text
+
+        const instructorSpan = document.createElement('span');
+        instructorSpan.classList.add('instructor');
+        instructorSpan.innerHTML = `<i class="fas fa-user"></i> ${item.instructor}`;  // Add the icon and text
+
+        // Append activity, location, and instructor to the details div
+        detailsDiv.appendChild(locationSpan);
+        detailsDiv.appendChild(activitySpan);
+        detailsDiv.appendChild(instructorSpan);
+
+        // Append the details div to the details cell
+        detailsCell.appendChild(detailsDiv);
+        newRow.appendChild(detailsCell);
+
+        // Append the row to the table body
         tableBody.appendChild(newRow);
-    });    
+    });
 }

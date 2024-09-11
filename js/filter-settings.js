@@ -1,10 +1,10 @@
 import { getAllLocations, getActivities, getInstructors } from './api.js'
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const backIcon = document.getElementById('back-icon');
-    
+
     if (backIcon) {
-        backIcon.addEventListener('click', function() {
+        backIcon.addEventListener('click', function () {
             window.location.href = 'index.html'; // Redirects to the index page
         });
     }
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to buttons to update localStorage and call refreshTable
     const buttons = document.querySelectorAll('.toggle-btn');
     buttons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             // Store the ID of the clicked button in localStorage
             localStorage.setItem('lastPressedButtonId', button.id);
 
@@ -32,14 +32,14 @@ document.addEventListener('DOMContentLoaded', function() {
             button.classList.add('active'); // Add 'active' class to clicked button
 
             // Call the refreshTable function when a button is clicked
-            refreshTable(button.id);            
+            refreshTable(button.id);
         });
     });
 });
 
 async function refreshTable(selectedButtonId) {
     let items = [];
-    
+
     // Determine what to display based on the selected button
     if (['button2', 'button5', 'button8'].includes(selectedButtonId)) {
         items = await getActivities();  // Get activities if button 2, 5, or 8 is pressed
@@ -48,10 +48,10 @@ async function refreshTable(selectedButtonId) {
     } else {
         items = getAllLocations();  // Default to locations if none of the above
     }
-    
+
     // Retrieve checked locations for the selected button from localStorage
     let checkedItems = JSON.parse(localStorage.getItem(`checkedItems_${selectedButtonId}`)) || [];
-    
+
     const tableBody = document.querySelector('.table tbody');
 
     // Clear existing rows
@@ -65,10 +65,10 @@ async function refreshTable(selectedButtonId) {
         const checkboxCell = document.createElement('td');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.checked = checkedItems.includes(item); 
+        checkbox.checked = checkedItems.includes(item);
 
         // Add an event listener to update localStorage when the checkbox is toggled
-        checkbox.addEventListener('change', function() {
+        checkbox.addEventListener('change', function () {
             // If the checkbox is checked, add the item to the array
             if (checkbox.checked) {
                 checkedItems.push(item);
@@ -78,7 +78,7 @@ async function refreshTable(selectedButtonId) {
             }
             // Update the localStorage with the modified array
             localStorage.setItem(`checkedItems_${selectedButtonId}`, JSON.stringify(checkedItems));
-        });    
+        });
 
         checkboxCell.appendChild(checkbox);  // Add the checkbox to the cell
         newRow.appendChild(checkboxCell);    // Add the checkbox cell to the row
