@@ -1,6 +1,15 @@
 
 export const gyms = [
+    { "id": 3, "location": "Huddinge" },
+    { "id": 460, "location": "Kallhäll" },
+    { "id": 461, "location": "Jakobsberg" },
+    { "id": 524, "location": "Åkersberga" },
+    { "id": 532, "location": "Haninge" },
+    { "id": 6168, "location": "Lidingö" },
+    { "id": 6169, "location": "Södertälje" },
+    { "id": 6182, "location": "Häggvik" },
     { "id": 6223, "location": "Abrahamsberg" },
+    { "id": 6225, "location": "Rålambshovsparken" },
     { "id": 6229, "location": "City" },
     { "id": 6230, "location": "Farsta" },
     { "id": 6231, "location": "Hagastan" },
@@ -15,4 +24,7 @@ export const gyms = [
     { "id": 6242, "location": "Solna" },
     { "id": 6243, "location": "Sundbyberg" },
     { "id": 6244, "location": "Sveavägen" },
+    { "id": 16797, "location": "Barkarby" },
+    { "id": 30924, "location": "Rotsunda" },
+    { "id": 31668, "location": "Ekerö" },
 ];

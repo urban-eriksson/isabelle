@@ -1,6 +1,7 @@
 import { gyms } from './gyms-data.js'
 
 let cache = {};  // In-memory cache
+let instructorCache = null;  // Cache for instructor data
 let cacheTimestamp = null;  // Global timestamp for cache validation
 
 // Helper function to get today's date as a string (e.g., "2024-01-01")
@@ -16,6 +17,7 @@ function invalidateCacheIfNeeded() {
     if (cacheTimestamp !== currentDate) {
         console.log("Cache invalidated. Fetching fresh data.");
         cache = {};  // Clear the cache
+        instructorCache = null;  // Clear instructor cache
         cacheTimestamp = currentDate;  // Set the new timestamp
     }
 }
@@ -101,9 +103,48 @@ async function getUniqueItems(extractFn) {
     return Array.from(uniqueItems).sort(); // Return sorted unique items
 }
 
+// Fetch instructors from API and cache them
+async function fetchInstructors() {
+    // Check if instructors are already cached
+    if (instructorCache) {
+        console.log("Returning cached instructor data");
+        return instructorCache;
+    }
+
+    // Fetch fresh instructor data from the API
+    console.log("Fetching fresh instructor data");
+    const url = "https://friskissvettis.brpsystems.com/brponline/api/ver3/apps/59/resources?includeAssets=true&includeBusinessUnitIds=true";
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    // Get gym IDs for filtering
+    const gymIds = new Set(gyms.map(gym => gym.id));
+    
+    // Filter instructors that work at relevant gyms
+    const relevantInstructors = data
+        .filter(resource => resource.type === "STAFF")
+        .filter(instructor => instructor.businessUnitIds.some(id => gymIds.has(id)))
+        .map(instructor => ({
+            id: instructor.id,
+            name: instructor.name,
+            businessUnitIds: instructor.businessUnitIds
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+    // Cache the instructor data
+    instructorCache = relevantInstructors;
+    
+    return relevantInstructors;
+}
+
 // Function to get unique instructors
-export function getInstructors() {
-    return getUniqueItems(item => item.instructor);
+export async function getInstructors() {
+    // First, check if the cache needs to be invalidated
+    invalidateCacheIfNeeded();
+    
+    const instructors = await fetchInstructors();
+    return instructors.map(instructor => instructor.name);
 }
 
 // Function to get unique activities
