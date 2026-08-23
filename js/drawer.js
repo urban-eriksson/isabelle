@@ -1,4 +1,5 @@
 import * as friskis from './friskis.js';
+import * as push from './push.js';
 
 const days = ["söndag", "måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag"];
 const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
@@ -55,6 +56,8 @@ function render() {
         content.appendChild(el('h2', 'drawer-title', 'Mitt Friskis'));
         if (friskis.isLoggedIn()) {
             content.appendChild(el('p', 'drawer-line', 'Du är inloggad.'));
+            content.appendChild(reminderToggle());
+            if (error) content.appendChild(el('p', 'drawer-error', error));
             const btn = el('button', 'drawer-btn secondary', 'Logga ut');
             btn.addEventListener('click', () => { friskis.logout(); closeDrawer(); });
             content.appendChild(btn);
@@ -149,6 +152,26 @@ async function run(action) {
         busy = false;
         render();
     }
+}
+
+// Checkbox for the morning reminders; hidden until we know a reminder server exists
+function reminderToggle() {
+    const wrap = el('div', 'reminder-toggle');
+    wrap.hidden = true;
+    const label = el('label');
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = push.isEnabled();
+    box.disabled = busy;
+    label.appendChild(box);
+    label.appendChild(document.createTextNode(' Påminn mig kl 05:00 om dagens bokade pass'));
+    wrap.appendChild(label);
+    wrap.appendChild(el('p', 'drawer-hint', 'Skickas som notis till den här enheten.'));
+    box.addEventListener('change', () => {
+        run(() => box.checked ? push.enable(friskis.getBookings()) : push.disable());
+    });
+    push.available().then(key => { if (key && current?.loginOnly) wrap.hidden = false; });
+    return wrap;
 }
 
 function loginForm() {

@@ -1,6 +1,8 @@
 // Client for the authenticated parts of the Friskis & Svettis (BRP) API:
 // login, token refresh and the customer's class bookings. Everything runs in
 // the browser; tokens live in localStorage and never leave the device.
+import * as push from './push.js';
+
 const API = 'https://friskissvettis.brpsystems.com/brponline/api/ver3';
 const OAUTH = 'https://friskissvettis.brpsystems.com/brponline/oauth/access_token';
 const SESSION_KEY = 'friskisSession';
@@ -82,7 +84,12 @@ export function logout() {
     bookings = [];
     saveJson(SESSION_KEY, null);
     saveJson(BOOKINGS_KEY, null);
+    push.sync([]).catch(() => {});
     notify();
+}
+
+export function getBookings() {
+    return bookings;
 }
 
 async function refreshAccessToken() {
@@ -128,6 +135,7 @@ export async function refreshBookings() {
     bookings = Array.isArray(data) ? data : [];
     saveJson(BOOKINGS_KEY, bookings);
     notify();
+    push.sync(bookings).catch(e => console.warn('Reminder sync failed', e));
     return bookings;
 }
 

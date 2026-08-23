@@ -85,6 +85,15 @@ async function fetchData(businessUnit) {
     return data;
 }
 
+// Looks up a raw class by id in whatever gyms are cached (used to enrich bookings)
+export function findCachedActivity(id) {
+    for (const entry of Object.values(cache)) {
+        const hit = entry.data?.find(item => item.id === id);
+        if (hit) return hit;
+    }
+    return null;
+}
+
 // Function to convert locations to IDs
 function getGymIdsFromLocations(locations) {
     return gyms

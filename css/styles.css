@@ -44,7 +44,7 @@ html {
 }
 
 #user-icon.logged-in {
-    color: #2e8b57;
+    color: red;
 }
 
 /* Bottom drawer */
@@ -134,13 +134,14 @@ html {
 }
 
 .drawer-btn.primary {
-    background: #2e8b57;
+    background: red;
     color: #fff;
 }
 
 .drawer-btn.danger {
-    background: #c0392b;
-    color: #fff;
+    background: #fff;
+    color: red;
+    border: 2px solid red;
 }
 
 .drawer-btn.secondary {
@@ -151,6 +152,18 @@ html {
 .drawer-btn:disabled {
     opacity: 0.6;
     cursor: default;
+}
+
+.reminder-toggle {
+    margin: 12px 0;
+    font-size: 15px;
+}
+
+.reminder-toggle input {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    accent-color: red;
 }
 
 .login-form {
