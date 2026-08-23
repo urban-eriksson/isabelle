@@ -1,4 +1,6 @@
 import { fetchAllData, transformItem, getAllLocations } from './api.js'
+import * as friskis from './friskis.js'
+import { initDrawer, openDrawer, openLogin } from './drawer.js'
 
 document.addEventListener('DOMContentLoaded', function () {
     const infoIcon = document.getElementById('info-icon');
@@ -6,6 +8,19 @@ document.addEventListener('DOMContentLoaded', function () {
         infoIcon.addEventListener('click', function () {
             window.location.href = 'manual.html'; // Redirect to the manual page
         });
+    }
+
+    initDrawer();
+    const userIcon = document.getElementById('user-icon');
+    userIcon.addEventListener('click', openLogin);
+    const updateUserIcon = () => userIcon.classList.toggle('logged-in', friskis.isLoggedIn());
+    updateUserIcon();
+    friskis.onChange(() => {
+        updateUserIcon();
+        markBookedRows();
+    });
+    if (friskis.isLoggedIn()) {
+        friskis.refreshBookings().catch(e => console.warn('Could not refresh bookings', e));
     }
 
     const settingsIcon = document.getElementById('settings-icon');
@@ -53,6 +68,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial table load
     refreshTable();
 });
+
+// Adds a marker to rows for classes the user has booked or queued for
+function markBookedRows() {
+    document.querySelectorAll('.main-table tbody tr').forEach(row => {
+        const info = friskis.bookingInfo(Number(row.dataset.id));
+        row.classList.toggle('mine', !!info && !info.waiting);
+        row.classList.toggle('mine-waiting', !!info && info.waiting);
+    });
+}
 
 async function refreshTable() {
     // Button IDs for locations, activities, and instructors
@@ -108,6 +132,8 @@ async function refreshTable() {
     sortedData.forEach(item => {
         const newRow = document.createElement('tr');
         newRow.classList.add(`status-${item.status}`);
+        newRow.dataset.id = item.id;
+        newRow.addEventListener('click', () => openDrawer(item));
 
         // First cell for the date and capacity
         const dateCell = document.createElement('td');
@@ -155,7 +181,15 @@ async function refreshTable() {
         detailsCell.appendChild(detailsDiv);
         newRow.appendChild(detailsCell);
 
+        // Third cell: booking marker / open-drawer affordance
+        const markerCell = document.createElement('td');
+        markerCell.classList.add('marker');
+        markerCell.innerHTML = '<i class="fas fa-check mine-icon"></i><i class="fas fa-hourglass-half waiting-icon"></i><i class="fas fa-chevron-right chevron"></i>';
+        newRow.appendChild(markerCell);
+
         // Append the row to the table body
         tableBody.appendChild(newRow);
     });
+
+    markBookedRows();
 }

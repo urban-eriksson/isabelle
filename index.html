@@ -23,7 +23,10 @@
 <body>
         <div class="container">
                 <div class="header">
-                        <i id="info-icon" class="fas fa-info-circle icon" aria-label="Info" title="User Manual"></i>
+                        <div class="header-group">
+                                <i id="info-icon" class="fas fa-info-circle icon" aria-label="Info" title="Användarmanual"></i>
+                                <i id="user-icon" class="fas fa-user-circle icon" aria-label="Logga in" title="Mitt Friskis"></i>
+                        </div>
                         <i id="settings-icon" class="fas fa-filter icon" aria-label="Filter settings"></i>
                 </div>
 
@@ -73,6 +76,12 @@
                                 <tbody></tbody>
                         </table>
                 </div>
+        </div>
+
+        <div id="drawer-backdrop" class="drawer-backdrop"></div>
+        <div id="drawer" class="drawer" role="dialog" aria-modal="true">
+                <div class="drawer-handle"></div>
+                <div id="drawer-content" class="drawer-content"></div>
         </div>
 
         <script type="module" src="js/index.js"></script>
