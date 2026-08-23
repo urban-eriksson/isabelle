@@ -53,14 +53,19 @@ html {
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     opacity: 0;
+    /* visibility (not just opacity) so the layer is truly gone when closed —
+       leaving it dims the status-bar area in installed PWAs */
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.25s;
+    transition: opacity 0.25s, visibility 0s linear 0.25s;
     z-index: 10;
 }
 
 .drawer-backdrop.open {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+    transition: opacity 0.25s;
 }
 
 .drawer {
