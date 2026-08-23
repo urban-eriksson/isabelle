@@ -1,19 +1,24 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Isabelle – Sök pass",
+    "short_name": "Isabelle",
+    "description": "Sök och filtrera pass hos Friskis & Svettis i Stockholm",
+    "lang": "sv",
+    "start_url": "./index.html",
+    "scope": "./",
     "icons": [
         {
-            "src": "/isabelle/android-chrome-192x192.png",
+            "src": "android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/isabelle/android-chrome-512x512.png",
+            "src": "android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
+    "theme_color": "#f8f9fa",
     "background_color": "#ffffff",
-    "display": "standalone"
+    "display": "standalone",
+    "orientation": "portrait"
 }
