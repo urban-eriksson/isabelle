@@ -94,7 +94,7 @@ async function refreshTable() {
     // Filter the data based on activities and instructors only if their buttons are 'on' and they have selected items
     const filteredData = transformedData.filter(item => {
         const activityMatches = !anyActivityButtonOn || checkedActivities.size === 0 || checkedActivities.has(item.activity);  // Match all if no activities are checked
-        const instructorMatches = !anyInstructorButtonOn || checkedInstructors.size === 0 || checkedInstructors.has(item.instructor);  // Match all if no instructors are checked
+        const instructorMatches = !anyInstructorButtonOn || checkedInstructors.size === 0 || item.instructors.some(name => checkedInstructors.has(name));  // Match all if no instructors are checked
         return activityMatches && instructorMatches;  // Include items that match both activity and instructor if active
     });
 
@@ -107,10 +107,26 @@ async function refreshTable() {
     // Populate the table with new data
     sortedData.forEach(item => {
         const newRow = document.createElement('tr');
+        newRow.classList.add(`status-${item.status}`);
 
-        // First cell for the date
+        // First cell for the date and capacity
         const dateCell = document.createElement('td');
-        dateCell.textContent = item.startTime;
+        const timeSpan = document.createElement('span');
+        timeSpan.classList.add('start-time');
+        timeSpan.textContent = item.startTime;
+        dateCell.appendChild(timeSpan);
+
+        const capacitySpan = document.createElement('span');
+        capacitySpan.classList.add('capacity');
+        if (item.cancelled) {
+            capacitySpan.textContent = 'Inställt';
+        } else if (item.status === 'dropin') {
+            capacitySpan.textContent = 'Drop-in';
+        } else if (item.total !== null) {
+            const waitlist = item.status === 'full' && item.hasWaitingList ? ` (+${item.inWaitingList})` : '';
+            capacitySpan.innerHTML = `<i class="fas fa-users"></i> ${item.booked}/${item.total}${waitlist}`;
+        }
+        dateCell.appendChild(capacitySpan);
         newRow.appendChild(dateCell);
 
         // Second cell for activity, location, and instructor (stacked vertically)

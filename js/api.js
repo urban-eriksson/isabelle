@@ -1,6 +1,9 @@
 import { gyms } from './gyms-data.js'
 
-let cache = {};  // In-memory cache
+const CACHE_KEY = 'apiCache';
+const CACHE_MAX_AGE = 15 * 60 * 1000;  // Spots left change quickly, so refetch after 15 minutes
+
+let cache = {};  // In-memory cache, mirrored to localStorage
 let instructorCache = null;  // Cache for instructor data
 let cacheTimestamp = null;  // Global timestamp for cache validation
 
@@ -8,6 +11,29 @@ let cacheTimestamp = null;  // Global timestamp for cache validation
 function getCurrentDateString() {
     return new Date().toISOString().split('T')[0];  // Only the date part in "YYYY-MM-DD" format
 }
+
+function loadPersistedCache() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CACHE_KEY));
+        if (stored && stored.date === getCurrentDateString()) {
+            cache = stored.cache || {};
+            instructorCache = stored.instructorCache || null;
+            cacheTimestamp = stored.date;
+        }
+    } catch (e) {
+        console.warn("Could not read persisted cache", e);
+    }
+}
+
+function persistCache() {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ date: cacheTimestamp, cache, instructorCache }));
+    } catch (e) {
+        console.warn("Could not persist cache", e);
+    }
+}
+
+loadPersistedCache();
 
 // Function to clear the cache when the date has changed
 function invalidateCacheIfNeeded() {
@@ -25,10 +51,11 @@ function invalidateCacheIfNeeded() {
 // Fetch data from API and cache it
 async function fetchData(businessUnit) {
 
-    // Check if the data for this business unit is already cached
-    if (cache[businessUnit]) {
+    // Check if the data for this business unit is already cached and fresh enough
+    const cached = cache[businessUnit];
+    if (cached && Date.now() - cached.fetchedAt < CACHE_MAX_AGE) {
         console.log(`Returning cached data for business unit ${businessUnit}`);
-        return cache[businessUnit];  // Return cached data
+        return cached.data;  // Return cached data
     }
 
     // Fetch fresh data from the API
@@ -39,11 +66,21 @@ async function fetchData(businessUnit) {
     const end = (new Date(now + duration)).toISOString().substring(0, 10) + "T21%3A59%3A59.999Z"
     const url = `https://friskissvettis.brpsystems.com/brponline/api/ver3/businessunits/${businessUnit}/groupactivities?period.end=${end}&period.start=${start}&webCategory=22`;
 
-    const response = await fetch(url);
-    const data = await response.json();
+    let data;
+    try {
+        const response = await fetch(url);
+        data = await response.json();
+    } catch (e) {
+        if (cached) {
+            console.warn(`Fetch failed for business unit ${businessUnit}, using stale cache`, e);
+            return cached.data;
+        }
+        throw e;
+    }
 
     // Cache the data
-    cache[businessUnit] = data;
+    cache[businessUnit] = { fetchedAt: Date.now(), data };
+    persistCache();
 
     return data;
 }
@@ -73,23 +110,53 @@ export function getAllLocations() {
     return gyms.map(gym => gym.location);
 }
 
+// Classify how full a class is: 'cancelled', 'dropin', 'full', 'almost' or 'open'
+function capacityStatus(item, slots) {
+    if (item.cancelled) return 'cancelled';
+    if (!slots) return 'open';
+    if (slots.totalBookable === 0) return 'dropin';  // All spots reserved for drop-in, nothing to book online
+    if (slots.leftToBook <= 0) return 'full';
+    if (slots.leftToBook <= 3 || slots.leftToBook / slots.totalBookable <= 0.1) return 'almost';
+    return 'open';
+}
+
+function formatInstructors(instructors) {
+    const names = instructors.map(i => i.isSubstitute ? `${i.name} (vik.)` : i.name);
+    if (names.length === 0) return "---";
+    if (names.length === 1) return names[0];
+    if (names.length === 2) return `${names[0]} & ${names[1]}`;
+    return `${names[0]} m. fl.`;
+}
+
 // Function to transform the fetched data
 export function transformItem(item) {
     const days = ["Sö", "Må", "Ti", "On", "To", "Fr", "Lö"];
     const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
     var date = new Date(item.duration.start);
     const zeroPad = (num, places) => String(num).padStart(places, '0')
-    const location = item.businessUnit.name.replace("Stockholm -", "")
-    const instructor = item.instructors.length > 1
-        ? `${item.instructors[0].name} m. fl.`
-        : (item.instructors[0]?.name || "---");
+    const slots = item.slots || null;
 
     return {
+        id: item.id,
         activity: item.name,
         date,
-        instructor,
+        endDate: new Date(item.duration.end),
+        instructor: formatInstructors(item.instructors),
+        instructors: item.instructors.map(i => i.name),
         location: item.businessUnit.name.replace("Stockholm -", ""),
-        startTime: `${days[date.getDay()]} ${zeroPad(date.getDate(), 2)} ${months[date.getMonth()]}. ${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}`
+        room: item.locations?.map(l => l.name).join(", ") || "",
+        startTime: `${days[date.getDay()]} ${zeroPad(date.getDate(), 2)} ${months[date.getMonth()]}. ${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}`,
+        cancelled: !!item.cancelled,
+        total: slots?.totalBookable ?? null,
+        booked: slots ? slots.totalBookable - slots.leftToBook : null,
+        leftToBook: slots?.leftToBook ?? null,
+        dropinSpots: slots?.leftToBookIncDropin ?? 0,
+        hasWaitingList: !!slots?.hasWaitingList,
+        inWaitingList: slots?.inWaitingList ?? 0,
+        status: capacityStatus(item, slots),
+        bookableEarliest: item.bookableEarliest ? new Date(item.bookableEarliest) : null,
+        bookableLatest: item.bookableLatest ? new Date(item.bookableLatest) : null,
+        message: item.externalMessage || ""
     };
 }
 
@@ -134,7 +201,8 @@ async function fetchInstructors() {
 
     // Cache the instructor data
     instructorCache = relevantInstructors;
-    
+    persistCache();
+
     return relevantInstructors;
 }
 

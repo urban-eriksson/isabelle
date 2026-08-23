@@ -164,9 +164,48 @@ html {
     /* Narrower checkbox column */
 }
 
-/* Even rows styling for table */
-.table tbody tr:nth-child(even) {
+.main-table td:first-child .start-time,
+.main-table td:first-child .capacity {
+    display: block;
+}
+
+.main-table .capacity {
+    margin-top: 4px;
+}
+
+.main-table .capacity i {
+    margin-right: 4px;
+}
+
+/* Even rows styling for settings table */
+.settings-table tbody tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+/* Main table: separator lines instead of zebra striping, so the tints stand out */
+.main-table td {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 2px solid #ccc;
+}
+
+/* Capacity tints: nearly full, full, cancelled */
+.main-table tr.status-almost {
+    background-color: #ffe6c7;
+}
+
+.main-table tr.status-full {
+    background-color: #ffd1d1;
+}
+
+.main-table tr.status-cancelled {
+    background-color: #e6e6e6;
+    color: #888;
+}
+
+.main-table tr.status-cancelled .activity {
+    text-decoration: line-through;
 }
 
 /* Responsive adjustments for table on small screens */
