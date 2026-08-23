@@ -36,6 +36,23 @@ Verified facts (2026-08-22) about the Friskis & Svettis API that the plan builds
 - Drawer gets "Boka" / "Ställ i kö" / "Avboka" buttons; the user's own bookings are highlighted
   in the list (green).
 
+## Deploying (step 4 onwards)
+
+```bash
+# 1. Infra: certificate (us-east-1) + S3/CloudFront/DNS/deploy bucket (eu-north-1).
+#    Also uploads the static app. Re-run this (or scripts/deploy-web.sh) after frontend changes.
+cd infra && npx aws-cdk deploy IsabelleCert Isabelle --require-approval never
+
+# 2. Server: package server/ + scripts/provision.sh, push via S3 + SSM to the snicksnack box.
+#    provision.sh is idempotent: swap file, isabelle user, VAPID keys, Caddy block, systemd units/timers.
+scripts/deploy-server.sh
+```
+
+Ops on the box (via `aws ssm start-session --target <instance>` or send-command):
+`systemctl status isabelle isabelle-remind.timer`, `journalctl -u isabelle-remind`,
+`sudo -u isabelle env $(cat /etc/isabelle/env /etc/isabelle/settings | xargs) /usr/local/bin/uv run --directory /opt/isabelle/app python -m isabelle.remind`
+to send today's reminders by hand. DB: `/var/lib/isabelle/isabelle.db`, backed up nightly to the Isabelle BackupBucket.
+
 ## Step 4 — nightly reminders via Web Push (needs a small backend)
 
 - Anonymous: identity is the push subscription itself, nothing syncs across devices, no login on our side.
