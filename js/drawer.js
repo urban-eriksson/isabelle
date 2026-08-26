@@ -1,5 +1,6 @@
 import * as friskis from './friskis.js';
 import * as push from './push.js';
+import { invalidateGym } from './api.js';
 
 const days = ["söndag", "måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag"];
 const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
@@ -112,11 +113,19 @@ function render() {
         return;
     }
 
+    // After a booking change the gym's spots-left numbers are stale: drop that
+    // gym from the cache and have the table re-render with fresh data.
+    const act = fn => run(async () => {
+        await fn();
+        invalidateGym(item.businessUnitId);
+        document.dispatchEvent(new Event('refresh-table'));
+    });
+
     const actions = el('div', 'drawer-actions');
     if (booking) {
         const btn = el('button', 'drawer-btn danger', booking.waiting ? 'Lämna kön' : 'Avboka');
         btn.disabled = busy;
-        btn.addEventListener('click', () => run(() => friskis.cancel(item.id)));
+        btn.addEventListener('click', () => act(() => friskis.cancel(item.id)));
         actions.appendChild(btn);
     } else if (item.cancelled || item.status === 'dropin') {
         // nothing to book
@@ -127,12 +136,12 @@ function render() {
     } else if (item.leftToBook > 0) {
         const btn = el('button', 'drawer-btn primary', 'Boka');
         btn.disabled = busy;
-        btn.addEventListener('click', () => run(() => friskis.book(item.id, false)));
+        btn.addEventListener('click', () => act(() => friskis.book(item.id, false)));
         actions.appendChild(btn);
     } else if (item.hasWaitingList) {
         const btn = el('button', 'drawer-btn primary', 'Ställ i kö');
         btn.disabled = busy;
-        btn.addEventListener('click', () => run(() => friskis.book(item.id, true)));
+        btn.addEventListener('click', () => act(() => friskis.book(item.id, true)));
         actions.appendChild(btn);
     } else {
         actions.appendChild(el('p', 'drawer-hint', 'Passet är fullbokat'));

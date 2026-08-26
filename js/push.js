@@ -82,6 +82,7 @@ function toReminderBookings(bookings) {
         if (!activity.id || !start) return null;
         return {
             id: activity.id,
+            businessUnitId: activity.businessUnit?.id || cached?.businessUnit?.id || null,
             activity: activity.name || cached?.name || 'pass',
             start,
             location: (activity.businessUnit?.name || cached?.businessUnit?.name || '').replace('Stockholm -', '').trim(),

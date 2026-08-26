@@ -10,6 +10,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // On the old GitHub Pages address: point visitors to the new home, where
+    // reminders work. Dismissable, and reappears after a week.
+    const banner = document.getElementById('moved-banner');
+    if (location.hostname.endsWith('github.io')) {
+        const dismissedAt = Number(localStorage.getItem('movedBannerDismissed') || 0);
+        if (Date.now() - dismissedAt > 7 * 24 * 3600 * 1000) banner.hidden = false;
+        document.getElementById('moved-banner-close').addEventListener('click', () => {
+            localStorage.setItem('movedBannerDismissed', String(Date.now()));
+            banner.hidden = true;
+        });
+    }
+
     initDrawer();
     const userIcon = document.getElementById('user-icon');
     userIcon.addEventListener('click', openLogin);
@@ -67,6 +79,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial table load
     refreshTable();
+
+    // Re-render after a booking changed the numbers (drawer invalidated the gym)
+    document.addEventListener('refresh-table', refreshTable);
+
+    // Coming back to the app (e.g. reopening the installed PWA) re-renders,
+    // which refetches any gym whose cache entry has passed its 15 minutes
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refreshTable();
+    });
 });
 
 // Adds a marker to rows for classes the user has booked or queued for
@@ -184,7 +205,7 @@ async function refreshTable() {
         // Third cell: booking marker / open-drawer affordance
         const markerCell = document.createElement('td');
         markerCell.classList.add('marker');
-        markerCell.innerHTML = '<i class="fas fa-check mine-icon"></i><i class="fas fa-hourglass-half waiting-icon"></i><i class="fas fa-chevron-right chevron"></i>';
+        markerCell.innerHTML = '<i class="fas fa-hourglass-half waiting-icon"></i><i class="fas fa-chevron-right chevron"></i>';
         newRow.appendChild(markerCell);
 
         // Append the row to the table body

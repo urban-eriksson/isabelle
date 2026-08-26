@@ -14,26 +14,69 @@ import sys
 from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
+import urllib.request
+
 from pywebpush import WebPushException, webpush
 
 from isabelle import config, store
 
 log = logging.getLogger("isabelle.remind")
 
-DAYS = ["måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag", "söndag"]
+FRISKIS_API = "https://friskissvettis.brpsystems.com/brponline/api/ver3"
 
 
-def message(row) -> tuple[str, str]:
-    start = datetime.strptime(row["start"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+def fresh_facts(row) -> dict:
+    """Re-fetch the class from the public Friskis API just before pushing: the
+    synced copy may be hours old and the time, instructor or cancellation
+    status can have changed overnight. Best effort — on any failure the synced
+    data is used as-is."""
+    facts = {
+        "start": row["start"],
+        "instructor": row["instructor"],
+        "location": row["location"],
+        "cancelled": False,
+    }
+    if not row["business_unit_id"]:
+        return facts
+    url = f"{FRISKIS_API}/businessunits/{row['business_unit_id']}/groupactivities/{row['activity_id']}"
+    try:
+        with urllib.request.urlopen(url, timeout=10) as response:
+            item = json.load(response)
+        facts["cancelled"] = bool(item.get("cancelled"))
+        start = item.get("duration", {}).get("start")
+        if start:
+            facts["start"] = (
+                datetime.fromisoformat(start.replace("Z", "+00:00"))
+                .astimezone(UTC)
+                .strftime("%Y-%m-%dT%H:%M:%SZ")
+            )
+        instructors = item.get("instructors") or []
+        if instructors:
+            facts["instructor"] = instructors[0].get("name", facts["instructor"])
+        unit = item.get("businessUnit", {}).get("name")
+        if unit:
+            facts["location"] = unit
+    except Exception as err:
+        log.warning("could not refresh activity %s: %s", row["activity_id"], err)
+    return facts
+
+
+def message(row, facts: dict) -> tuple[str, str]:
+    start = datetime.strptime(facts["start"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
     local = start.astimezone(ZoneInfo(config.TIMEZONE))
-    location = row["location"].replace("Stockholm -", "").strip()
+    location = facts["location"].replace("Stockholm -", "").strip()
     where = f" på {location}" if location else ""
-    who = f" med {row['instructor']}" if row["instructor"] else ""
-    if row["waiting"]:
+    who = f" med {facts['instructor']}" if facts["instructor"] else ""
+    when_where = f"{local.strftime('%H:%M')}{where}"
+    if facts["cancelled"]:
+        title = f"{row['activity']} idag är inställt"
+        body = f"Passet {when_where} har ställts in."
+    elif row["waiting"]:
         title = f"Du står i kö till {row['activity']} idag"
+        body = f"{when_where}{who}"
     else:
         title = f"Du har {row['activity']} idag"
-    body = f"{local.strftime('%H:%M')}{where}{who}"
+        body = f"{when_where}{who}"
     return title, body
 
 
@@ -59,7 +102,7 @@ def run(now: datetime | None = None) -> int:
         for row in rows:
             if row["endpoint"] in dead:
                 continue
-            title, body = message(row)
+            title, body = message(row, fresh_facts(row))
             payload = json.dumps(
                 {"title": title, "body": body, "url": config.WEB_URL}, ensure_ascii=False
             )

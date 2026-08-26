@@ -37,6 +37,7 @@ class Keys(BaseModel):
 
 class Booking(BaseModel):
     id: int
+    businessUnitId: int | None = None
     activity: str = Field(max_length=200)
     start: datetime
     location: str = Field(default="", max_length=200)
@@ -82,6 +83,7 @@ def sync(body: SyncIn) -> dict[str, int]:
     rows = [
         {
             "id": b.id,
+            "businessUnitId": b.businessUnitId,
             "activity": b.activity,
             "start": b.start.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "location": b.location,

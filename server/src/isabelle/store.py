@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 CREATE TABLE IF NOT EXISTS bookings (
     endpoint TEXT NOT NULL REFERENCES subscriptions(endpoint) ON DELETE CASCADE,
     activity_id INTEGER NOT NULL,
+    business_unit_id INTEGER,
     activity TEXT NOT NULL,
     start TEXT NOT NULL,
     location TEXT NOT NULL DEFAULT '',
@@ -44,6 +45,10 @@ def connect() -> Iterator[sqlite3.Connection]:
     conn.execute("PRAGMA foreign_keys = ON")
     try:
         conn.executescript(SCHEMA)
+        # Migration for databases created before business_unit_id existed
+        columns = {r["name"] for r in conn.execute("PRAGMA table_info(bookings)")}
+        if "business_unit_id" not in columns:
+            conn.execute("ALTER TABLE bookings ADD COLUMN business_unit_id INTEGER")
         yield conn
         conn.commit()
     finally:
@@ -62,12 +67,14 @@ def upsert_subscription(conn: sqlite3.Connection, endpoint: str, p256dh: str, au
 def replace_bookings(conn: sqlite3.Connection, endpoint: str, bookings: list[dict]) -> None:
     conn.execute("DELETE FROM bookings WHERE endpoint = ?", (endpoint,))
     conn.executemany(
-        """INSERT INTO bookings (endpoint, activity_id, activity, start, location, instructor, waiting)
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO bookings
+           (endpoint, activity_id, business_unit_id, activity, start, location, instructor, waiting)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         [
             (
                 endpoint,
                 b["id"],
+                b.get("businessUnitId"),
                 b["activity"],
                 b["start"],
                 b.get("location", ""),
@@ -94,8 +101,8 @@ def bookings_between(conn: sqlite3.Connection, start_iso: str, end_iso: str) -> 
     their subscription keys. ISO strings compare correctly as long as every
     stored `start` is UTC with the same format, which the API enforces."""
     return conn.execute(
-        """SELECT b.endpoint, b.activity_id, b.activity, b.start, b.location, b.instructor,
-                  b.waiting, s.p256dh, s.auth
+        """SELECT b.endpoint, b.activity_id, b.business_unit_id, b.activity, b.start, b.location,
+                  b.instructor, b.waiting, s.p256dh, s.auth
            FROM bookings b JOIN subscriptions s ON s.endpoint = b.endpoint
            WHERE b.start >= ? AND b.start < ?
              AND NOT EXISTS (SELECT 1 FROM reminders_sent r

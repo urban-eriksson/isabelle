@@ -85,6 +85,15 @@ async function fetchData(businessUnit) {
     return data;
 }
 
+// Drops one gym from the cache so the next fetch is fresh (used after book/cancel,
+// where the spots-left numbers have just changed)
+export function invalidateGym(businessUnitId) {
+    if (businessUnitId && cache[businessUnitId]) {
+        delete cache[businessUnitId];
+        persistCache();
+    }
+}
+
 // Looks up a raw class by id in whatever gyms are cached (used to enrich bookings)
 export function findCachedActivity(id) {
     for (const entry of Object.values(cache)) {
@@ -147,6 +156,7 @@ export function transformItem(item) {
 
     return {
         id: item.id,
+        businessUnitId: item.businessUnit.id,
         activity: item.name,
         date,
         endDate: new Date(item.duration.end),
