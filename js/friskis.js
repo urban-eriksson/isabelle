@@ -166,16 +166,17 @@ export async function book(activityId, allowWaitingList) {
 
 // A cancel inside the late-cancellation window is refused with code
 // LATE_CANCELLATION_CONSENT_REQUIRED until it is retried with allowLate=true.
+// The API takes the arguments as query parameters, not a request body.
 export async function cancel(activityId, allowLate = false) {
     const b = getBooking(activityId);
     if (!b) return;
     const bookingId = b.groupActivityBooking?.id || b.waitingListBooking?.id;
-    await authFetch(`/customers/${session.customerId}/bookings/groupactivities/${bookingId}`, {
-        method: 'DELETE',
-        body: JSON.stringify({
-            bookingType: b.type,
-            ...(allowLate ? { allowLateCancellationWithNoShow: true } : {})
-        })
-    });
+    const bookingType = b.type || (b.groupActivityBooking ? 'groupActivityBooking' : 'waitingListBooking');
+    const params = new URLSearchParams({ bookingType });
+    if (allowLate) params.set('allowLateCancellationWithNoShow', 'true');
+    await authFetch(
+        `/customers/${session.customerId}/bookings/groupactivities/${bookingId}?${params}`,
+        { method: 'DELETE' }
+    );
     await refreshBookings();
 }

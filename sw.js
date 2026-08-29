@@ -1,7 +1,7 @@
 // Service worker: caches the app shell so Isabelle opens instantly and works
 // offline (class data is cached separately in localStorage by js/api.js).
 // Bump CACHE_VERSION whenever shell files change so old caches are dropped.
-const CACHE_VERSION = 'isabelle-v6';
+const CACHE_VERSION = 'isabelle-v7';
 
 const SHELL = [
     './',
