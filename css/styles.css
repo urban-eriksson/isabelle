@@ -386,11 +386,7 @@ html {
     border-bottom: 2px solid #ccc;
 }
 
-/* Capacity tints: nearly full, full, cancelled */
-.main-table tr.status-almost {
-    background-color: #ffe6c7;
-}
-
+/* Capacity tints: full, cancelled */
 .main-table tr.status-full {
     background-color: #ffd1d1;
 }
@@ -404,11 +400,14 @@ html {
     text-decoration: line-through;
 }
 
-/* Own bookings: a green tint of the same strength as the status tints.
-   Placed after them so being booked wins over full/almost. */
-.main-table tr.mine,
-.main-table tr.mine-waiting {
+/* Own bookings: green when booked, orange while in the waiting list.
+   Placed after the status tints so they win over full. */
+.main-table tr.mine {
     background-color: #cdedd5;
+}
+
+.main-table tr.mine-waiting {
+    background-color: #ffe6c7;
 }
 
 /* Responsive adjustments for table on small screens */

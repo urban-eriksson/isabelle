@@ -128,13 +128,12 @@ export function getAllLocations() {
     return gyms.map(gym => gym.location);
 }
 
-// Classify how full a class is: 'cancelled', 'dropin', 'full', 'almost' or 'open'
+// Classify how full a class is: 'cancelled', 'dropin', 'full' or 'open'
 function capacityStatus(item, slots) {
     if (item.cancelled) return 'cancelled';
     if (!slots) return 'open';
     if (slots.totalBookable === 0) return 'dropin';  // All spots reserved for drop-in, nothing to book online
     if (slots.leftToBook <= 0) return 'full';
-    if (slots.leftToBook <= 3 || slots.leftToBook / slots.totalBookable <= 0.1) return 'almost';
     return 'open';
 }
 

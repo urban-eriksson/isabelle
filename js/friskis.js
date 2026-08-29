@@ -41,8 +41,9 @@ export function isLoggedIn() {
 
 export class ApiError extends Error {
     constructor(status, body) {
-        super(body?.message || body?.errorMessage || `HTTP ${status}`);
+        super(body?.message || body?.errorMessage || body?.code || `HTTP ${status}`);
         this.status = status;
+        this.code = body?.code || body?.errorCode || null;
         this.body = body;
     }
 }
@@ -163,13 +164,18 @@ export async function book(activityId, allowWaitingList) {
     return result;
 }
 
-export async function cancel(activityId) {
+// A cancel inside the late-cancellation window is refused with code
+// LATE_CANCELLATION_CONSENT_REQUIRED until it is retried with allowLate=true.
+export async function cancel(activityId, allowLate = false) {
     const b = getBooking(activityId);
     if (!b) return;
     const bookingId = b.groupActivityBooking?.id || b.waitingListBooking?.id;
     await authFetch(`/customers/${session.customerId}/bookings/groupactivities/${bookingId}`, {
         method: 'DELETE',
-        body: JSON.stringify({ bookingType: b.type })
+        body: JSON.stringify({
+            bookingType: b.type,
+            ...(allowLate ? { allowLateCancellationWithNoShow: true } : {})
+        })
     });
     await refreshBookings();
 }

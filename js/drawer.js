@@ -12,6 +12,15 @@ let drawer, backdrop, content;
 let current = null;  // the item currently shown
 let busy = false;
 let error = '';
+let needsLateConsent = false;  // cancel was refused pending late-cancellation consent
+
+const ERROR_TEXTS = {
+    TOO_LATE_TO_CANCEL: 'Det är för sent att avboka det här passet.',
+    TOO_LATE_TO_CANCEL_RULE: 'Det är för sent att avboka det här passet.',
+    TOO_LATE_TO_BOOK: 'Bokningen har stängt för det här passet.',
+    TOO_EARLY_TO_BOOK: 'Bokningen har inte öppnat ännu.',
+    ALREADY_BOOKED: 'Du är redan bokad på passet.',
+};
 
 export function initDrawer() {
     drawer = document.getElementById('drawer');
@@ -24,6 +33,7 @@ export function initDrawer() {
 export function openDrawer(item) {
     current = item;
     error = '';
+    needsLateConsent = false;
     render();
     drawer.classList.add('open');
     backdrop.classList.add('open');
@@ -122,7 +132,17 @@ function render() {
     });
 
     const actions = el('div', 'drawer-actions');
-    if (booking) {
+    if (booking && needsLateConsent) {
+        actions.appendChild(el('p', 'drawer-hint',
+            'Sen avbokning: passet är nära i tid, så avbokningen räknas som "no show". Vill du avboka ändå?'));
+        const btn = el('button', 'drawer-btn danger', 'Avboka ändå');
+        btn.disabled = busy;
+        btn.addEventListener('click', () => {
+            needsLateConsent = false;
+            act(() => friskis.cancel(item.id, true));
+        });
+        actions.appendChild(btn);
+    } else if (booking) {
         const btn = el('button', 'drawer-btn danger', booking.waiting ? 'Lämna kön' : 'Avboka');
         btn.disabled = busy;
         btn.addEventListener('click', () => act(() => friskis.cancel(item.id)));
@@ -156,7 +176,11 @@ async function run(action) {
     try {
         await action();
     } catch (e) {
-        error = e.message || 'Något gick fel';
+        if (e.code === 'LATE_CANCELLATION_CONSENT_REQUIRED') {
+            needsLateConsent = true;
+        } else {
+            error = ERROR_TEXTS[e.code] || e.message || 'Något gick fel';
+        }
     } finally {
         busy = false;
         render();
