@@ -3,12 +3,12 @@
 Two stacks, mirroring snicksnack:
 - IsabelleCert (us-east-1): the CloudFront certificate.
 - Isabelle (eu-north-1): S3 + CloudFront for the static app at isabelle.korist.se
-  with /api/* proxied to api.isabelle.korist.se, which is the *existing*
-  snicksnack EC2 box (Caddy in front of a second uvicorn on port 8001).
+  with /api/* proxied to api.isabelle.korist.se, on the shared dev box (Caddy
+  in front of a uvicorn on port 8001).
 
-The box itself belongs to the Snicksnack stack. This stack only adds DNS for
-it, a deploy bucket its instance role may read, and reads the instance id,
-Elastic IP and role name from the Snicksnack stack at synth time.
+The box itself is the KoristDev stack (repo korist-infra). This stack only adds
+DNS for it, a deploy bucket its instance role may read, and reads the instance
+id, Elastic IP and role name from the KoristDev stack at synth time.
 """
 
 # pyright: reportArgumentType=false
@@ -38,7 +38,7 @@ REGION = "eu-north-1"
 ZONE_NAME = "korist.se"
 DOMAIN = "isabelle.korist.se"
 API_DOMAIN = "api.isabelle.korist.se"
-SERVER_STACK = "Snicksnack"
+SERVER_STACK = "KoristDev"  # the dev box, owned by korist-infra
 
 
 def server_facts() -> dict[str, str]:
@@ -99,7 +99,9 @@ class IsabelleStack(Stack):
             removal_policy=cdk.RemovalPolicy.RETAIN,
             lifecycle_rules=[s3.LifecycleRule(prefix="db/", expiration=cdk.Duration.days(30))],
         )
-        role = iam.Role.from_role_name(self, "ServerRole", server["role_name"])
+        # Not "ServerRole": several stacks grant on one box role, and CDK names the inline
+        # policy after the construct path, so they would overwrite each other's policy.
+        role = iam.Role.from_role_name(self, "IsabelleServerRole", server["role_name"])
         deploy_bucket.grant_read(role)
         backup_bucket.grant_read_write(role)
 
