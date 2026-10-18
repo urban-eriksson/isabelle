@@ -46,13 +46,21 @@ chgrp isabelle /etc/isabelle/settings
 chmod 640 /etc/isabelle/settings
 
 # Caddy: our own site block, appended once. Caddy's automatic HTTPS handles the cert.
+# The Caddyfile is shared with the other apps on the box: validate before reloading,
+# and put the old file back untouched if the new one does not parse.
 if ! grep -q "^$API_DOMAIN" /etc/caddy/Caddyfile; then
+  cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak
   cat >> /etc/caddy/Caddyfile <<EOF
 
 $API_DOMAIN {
     reverse_proxy 127.0.0.1:8001
 }
 EOF
+  if ! caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile; then
+    mv /etc/caddy/Caddyfile.bak /etc/caddy/Caddyfile
+    echo "Caddyfile did not validate; left untouched and did not reload" >&2
+    exit 1
+  fi
   systemctl reload caddy
 fi
 
